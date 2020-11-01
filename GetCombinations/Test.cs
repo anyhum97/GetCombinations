@@ -73,5 +73,16 @@ namespace Combinations
 
 			Console.ReadKey();
 		}
+
+		private static void StraightTest()
+		{
+			Random random = new Random();
+
+			for(int i=0; i<10; ++i)
+			{
+				Card Card1 = new Card(0, random.Next(4));
+
+			}
+		}
 	}
 }

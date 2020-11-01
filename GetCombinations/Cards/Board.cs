@@ -4,21 +4,27 @@ namespace Combinations
 {
 	public class Board
 	{
-		public string Title { get; private set; }
+		public string Title { get; protected set; }
 
-		public Card Card1 { get; private set; }
+		public Card Card1 { get; protected set; }
 
-		public Card Card2 { get; private set; }
+		public Card Card2 { get; protected set; }
 
-		public Card Card3 { get; private set; }
+		public Card Card3 { get; protected set; }
 
-		public Card Card4 { get; private set; }
+		public Card Card4 { get; protected set; }
 
-		public Card Card5 { get; private set; }
+		public Card Card5 { get; protected set; }
 
-		public int Street { get; private set; }
+		public int Street { get; protected set; }
 
 		public ulong Mask { get; protected set; }
+
+		public int FlushLevel { get; protected set; }
+
+		public int StraightLevel { get; protected set; }
+
+		public int StraightCount { get; protected set; }
 
 		public Board()
 		{
@@ -65,11 +71,9 @@ namespace Combinations
 				Card2 = сard2;
 				Card3 = сard3;
 
-				Title = Card1.Title + " " + Card2.Title + " " + Card3.Title;
-
-				Mask = Card1.Mask | Card2.Mask | Card3.Mask;
-
 				Street = 1;
+
+				SetProperties();
 			}
 		}
 
@@ -99,11 +103,9 @@ namespace Combinations
 				Card3 = card3;
 				Card4 = card4;
 
-				Title = Card1.Title + " " + Card2.Title + " " + Card3.Title + " " + Card4.Title;
-
-				Mask = Card1.Mask | Card2.Mask | Card3.Mask | Card4.Mask;
-
 				Street = 2;
+
+				SetProperties();
 			}
 		}
 
@@ -139,11 +141,9 @@ namespace Combinations
 				Card4 = card4;
 				Card5 = card5;
 
-				Title = Card1.Title + " " + Card2.Title + " " + Card3.Title + " " + Card4.Title + " " + Card5.Title;
-
-				Mask = Card1.Mask | Card2.Mask | Card3.Mask | Card4.Mask | Card5.Mask;
-
 				Street = 3;
+
+				SetProperties();
 			}
 		}
 
@@ -221,8 +221,6 @@ namespace Combinations
 			Card5 = new Card();
 
 			Mask = ulong.MaxValue;
-
-			Street = 0;
 		}
 
 		public bool IsValid()
@@ -295,6 +293,29 @@ namespace Combinations
 			return Title;
 		}
 
+		public string Text()
+		{
+			if(IsValid())
+			{
+				if(Street == 1)
+				{
+					return Card1.Title + " " + Card2.Title + " " + Card3.Title;
+				}
+
+				if(Street == 2)
+				{
+					return Card1.Title + " " + Card2.Title + " " + Card3.Title + " " + Card4.Title;
+				}
+
+				if(Street == 3)
+				{
+					return Card1.Title + " " + Card2.Title + " " + Card3.Title + " " + Card4.Title + " " + Card5.Title;
+				}
+			}
+			
+			return "Invalid";
+		}
+
 		private bool CardPattern(string str, ref string title, int start, ref int pos)
 		{
 			title = null;
@@ -318,27 +339,151 @@ namespace Combinations
 			return false;
 		}
 
-		public string Text()
+		private void UpdateTitle()
 		{
-			if(IsValid())
+			if(Street == 1)
 			{
-				if(Street == 1)
-				{
-					return Card1.Title + " " + Card2.Title + " " + Card3.Title;
-				}
+				Title = Card1.Title + " " + Card2.Title + " " + Card3.Title;
+				
+				return;
+			}
 
-				if(Street == 2)
-				{
-					return Card1.Title + " " + Card2.Title + " " + Card3.Title + " " + Card4.Title;
-				}
+			if(Street == 2)
+			{
+				Title = Card1.Title + " " + Card2.Title + " " + Card3.Title + " " + Card4.Title;
+				
+				return;
+			}
 
-				if(Street == 3)
-				{
-					return Card1.Title + " " + Card2.Title + " " + Card3.Title + " " + Card4.Title + " " + Card5.Title;
-				}
+			if(Street == 3)
+			{
+				Title = Card1.Title + " " + Card2.Title + " " + Card3.Title + " " + Card4.Title + " " + Card5.Title;
+				
+				return;
+			}
+
+			Title = "Invalid";
+		}
+
+		private void UpdateMask()
+		{
+			if(Street == 1)
+			{
+				Mask = Card1.Mask | Card2.Mask | Card3.Mask;
+
+				return;
+			}
+
+			if(Street == 2)
+			{
+				Mask = Card1.Mask | Card2.Mask | Card3.Mask | Card4.Mask;
+
+				return;
+			}
+
+			if(Street == 3)
+			{
+				Mask = Card1.Mask | Card2.Mask | Card3.Mask | Card4.Mask | Card5.Mask;
+
+				return;
+			}
+		}
+
+		private void UpdateFlushLevel()
+		{
+			// Сколько карт одной масти содержит данный борд.
+
+			int[] levels = new int[4];
+			
+			++levels[Card1.Suit];
+			++levels[Card2.Suit];
+			++levels[Card3.Suit];
+			
+			if(Street > 1)
+			{
+				++levels[Card4.Suit];
 			}
 			
-			return "Invalid";
+			if(Street > 2)
+			{
+				++levels[Card5.Suit];
+			}
+			
+			FlushLevel = Math.Max(Math.Max(levels[0], levels[1]), Math.Max(levels[2], levels[3]));
+		}
+
+		private void UpdateStraightLevel()
+		{
+			// A 2 3 4 5 6 7 8 9 T  J  Q  K  A
+
+			// 0 1 2 3 4 5 6 7 8 9 10 11 12 13
+
+			bool[] positions = new bool[14];
+
+			positions[Card1.Denomination+1] = true;
+			positions[Card2.Denomination+1] = true;
+			positions[Card3.Denomination+1] = true;
+
+			if(Street > 1)
+			{
+				positions[Card4.Denomination+1] = true;
+			}
+			
+			if(Street > 2)
+			{
+				positions[Card5.Denomination+1] = true;
+			}
+
+			positions[0] = positions[13];
+
+			// Какое максимальное число карт стоит подряд:
+
+			StraightLevel = 0;
+
+			for(int i=0; i<13; ++i)
+			{
+				int count = 0;
+
+				for(int j=i; j<i+5 && j<14; ++j)
+				{
+					if(!positions[j])
+					{
+						break;
+					}
+
+					++count;
+				}
+
+				StraightLevel = Math.Max(StraightLevel, count);
+			}
+
+			// Максимальное число карт, которые могут составить стрит:
+
+			StraightCount = 0;
+
+			for(int i=0; i<10; ++i)
+			{
+				int count = 0;
+
+				for(int j=i; j<i+5; ++j)
+				{
+					if(positions[j])
+					{
+						++count;
+					}
+				}
+
+				StraightCount = Math.Max(StraightCount, count);
+			}
+		}
+
+		private void SetProperties()
+		{
+			UpdateTitle();
+			UpdateMask();
+
+			UpdateFlushLevel();
+			UpdateStraightLevel();
 		}
 	}
 }

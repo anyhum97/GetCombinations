@@ -6,12 +6,17 @@ namespace Combinations
 	{
 		private static void Main()
 		{
-			Board board1 = new Board("2c 7h 4d8cJc                           2");
-			Board board2 = new Board("2c 7h 4d8cJc");
-			
-			Hand hand = new Hand("9h8c");
+			Board board1 = new Board("2c4h6d");
 
-			bool s = board1 != board2;
+			Console.WriteLine(board1 + "\n");
+
+			Console.WriteLine("FlushLevel: " + board1.FlushLevel);
+
+			Console.WriteLine("StraightLevel: " + board1.StraightLevel);
+
+			Console.WriteLine("StraightCount: " + board1.StraightCount);
+
+			Console.ReadKey();
 		}
 	}
 }

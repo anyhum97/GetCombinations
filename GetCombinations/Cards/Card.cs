@@ -39,7 +39,7 @@ namespace Combinations
 			Suit = suit;
 
 			UpdateMask();
-			UpdateText();
+			UpdateTitle();
 		}
 
 		public void Set(string str)
@@ -83,7 +83,7 @@ namespace Combinations
 				}
 
 				UpdateMask();
-				UpdateText();
+				UpdateTitle();
 			}
 		}
 
@@ -184,7 +184,7 @@ namespace Combinations
 			Mask = 1UL << (Denomination + 13 * Suit);
 		}
 
-		private void UpdateText()
+		private void UpdateTitle()
 		{
 			Title = Text();
 		}
