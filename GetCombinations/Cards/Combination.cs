@@ -18,7 +18,9 @@ namespace Combinations
 
 		public int PairLevel { get; protected set; }
 
-		public int CardLevel { get; protected set; }
+		public int CardLevel1 { get; protected set; }
+
+		public int CardLevel2 { get; protected set; }
 
 		public Combination()
 		{
@@ -219,11 +221,13 @@ namespace Combinations
 			}
 
 			// 0 => Nothing
-			// 1 => One Pair
-			// 2 => Two pair
-			// 3 => Three of a Kind
-			// 4 => Full House
-			// 5 => Four of a Kind
+			// 1 => Week Pair
+			// 2 => Middle Pair
+			// 3 => High Pair
+			// 4 => Two pair
+			// 5 => Three of a Kind
+			// 6 => Full House
+			// 7 => Four of a Kind
 
 			PairLevel = 0;
 
@@ -285,26 +289,34 @@ namespace Combinations
 
 		private void UpdateCardLevel()
 		{
-			CardLevel = 0;
+			CardLevel1 = 0;
+			CardLevel2 = 0;
 
-			CardLevel = Math.Max(CardLevel, Hand.Card1.Denomination);
-			CardLevel = Math.Max(CardLevel, Hand.Card2.Denomination);
+			CardLevel1 = Math.Max(CardLevel1, Hand.Card1.Denomination);
+			CardLevel1 = Math.Max(CardLevel1, Hand.Card2.Denomination);
 
 			if(Board.Street > 0)
 			{
-				CardLevel = Math.Max(CardLevel, Board.Card1.Denomination);
-				CardLevel = Math.Max(CardLevel, Board.Card2.Denomination);
-				CardLevel = Math.Max(CardLevel, Board.Card3.Denomination);
+				CardLevel1 = Math.Max(CardLevel1, Board.Card1.Denomination);
+				CardLevel1 = Math.Max(CardLevel1, Board.Card2.Denomination);
+				CardLevel1 = Math.Max(CardLevel1, Board.Card3.Denomination);
+			}
+			else
+			{
+				CardLevel2 = CardLevel1;
+
+				CardLevel2 = Math.Min(CardLevel2, Hand.Card1.Denomination);
+				CardLevel2 = Math.Min(CardLevel2, Hand.Card2.Denomination);
 			}
 
 			if(Board.Street > 1)
 			{
-				CardLevel = Math.Max(CardLevel, Board.Card4.Denomination);
+				CardLevel1 = Math.Max(CardLevel1, Board.Card4.Denomination);
 			}
 
 			if(Board.Street > 2)
 			{
-				CardLevel = Math.Max(CardLevel, Board.Card5.Denomination);
+				CardLevel1 = Math.Max(CardLevel1, Board.Card5.Denomination);
 			}
 		}
 
@@ -319,3 +331,4 @@ namespace Combinations
 		}
 	}
 }
+

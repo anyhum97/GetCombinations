@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Combinations
 {
@@ -106,7 +102,9 @@ namespace Combinations
 
 		private static void CombinationTest()
 		{
-			Combination combination = new Combination(new Hand("Ks8c"), new Board("Qd, Jh, 8d"));
+			//Combination combination = new Combination(new Hand("As8c"), new Board("Qd, 8h, Ad"));
+
+			Combination combination = new Combination(new Hand("AsKs"), new Board());
 
 			Console.WriteLine(combination + "\n");
 
@@ -118,7 +116,15 @@ namespace Combinations
 
 			Console.WriteLine("PairLevel: " + combination.PairLevel);
 
-			Console.WriteLine("CardLevel: " + combination.CardLevel);
+			if(combination.Board.Street == 0)
+			{
+				Console.WriteLine("CardLevel1: " + combination.CardLevel1);
+				Console.WriteLine("CardLevel2: " + combination.CardLevel2);
+			}
+			else
+			{
+				Console.WriteLine("CardLevel: " + combination.CardLevel1);
+			}
 
 			Console.WriteLine();
 
@@ -136,3 +142,4 @@ namespace Combinations
 		}
 	}
 }
+
