@@ -256,6 +256,16 @@ namespace Combinations
 
 				if(denominations[i] == 2)
 				{
+					if(i > 9)
+					{
+						PairLevel = Math.Max(PairLevel, 3);
+					}
+
+					if(i > 5)
+					{
+						PairLevel = Math.Max(PairLevel, 2);
+					}
+
 					PairLevel = Math.Max(PairLevel, 1);
 
 					for(int j=0; j<13; ++j)
@@ -264,9 +274,9 @@ namespace Combinations
 						{
 							if(denominations[j] == 2)
 							{
-								PairLevel = Math.Max(PairLevel, 2);
+								PairLevel = Math.Max(PairLevel, 4);
 								break;
-							}							
+							}
 						}
 					}
 				}

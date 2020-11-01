@@ -226,13 +226,13 @@ namespace Combinations
 
 			Street = 0;
 
+			Mask = ulong.MaxValue;
+
 			FlushLevel = 1;
 			StraightLevel = 1;
 			StraightCount = 1;
 			PairLevel = 0;
 			CardLevel = 0;
-
-			Mask = ulong.MaxValue;
 		}
 
 		public bool IsValid()
@@ -421,7 +421,15 @@ namespace Combinations
 				++levels[Card5.Suit];
 			}
 			
-			FlushLevel = Math.Max(Math.Max(levels[0], levels[1]), Math.Max(levels[2], levels[3]));
+			FlushLevel = 1;
+
+			for(int i=0; i<4; ++i)
+			{
+				if(levels[i] > FlushLevel)
+				{
+					FlushLevel = levels[i];
+				}
+			}
 		}
 
 		private void UpdateStraightLevel()
@@ -508,11 +516,13 @@ namespace Combinations
 			}
 
 			// 0 => Nothing
-			// 1 => One Pair
-			// 2 => Two pair
-			// 3 => Three of a Kind
-			// 4 => Full House
-			// 5 => Four of a Kind
+			// 1 => Week Pair
+			// 2 => Middle Pair
+			// 3 => High Pair
+			// 4 => Two pair
+			// 5 => Three of a Kind
+			// 6 => Full House
+			// 7 => Four of a Kind
 
 			PairLevel = 0;
 
@@ -520,13 +530,13 @@ namespace Combinations
 			{
 				if(denominations[i] == 4)
 				{
-					PairLevel = 5;
+					PairLevel = 7;
 					return;
 				}
 
 				if(denominations[i] == 3)
 				{
-					PairLevel = 3;
+					PairLevel = 5;
 
 					for(int j=0; j<13; ++j)
 					{
@@ -534,7 +544,7 @@ namespace Combinations
 						{
 							if(denominations[j] == 2)
 							{
-								PairLevel = 4;
+								PairLevel = 6;
 								return;
 							}
 						}
@@ -545,6 +555,16 @@ namespace Combinations
 
 				if(denominations[i] == 2)
 				{
+					if(i > 9)
+					{
+						PairLevel = Math.Max(PairLevel, 3);
+					}
+
+					if(i > 5)
+					{
+						PairLevel = Math.Max(PairLevel, 2);
+					}
+
 					PairLevel = Math.Max(PairLevel, 1);
 
 					for(int j=0; j<13; ++j)
@@ -553,9 +573,9 @@ namespace Combinations
 						{
 							if(denominations[j] == 2)
 							{
-								PairLevel = Math.Max(PairLevel, 2);
+								PairLevel = Math.Max(PairLevel, 4);
 								break;
-							}							
+							}
 						}
 					}
 				}
