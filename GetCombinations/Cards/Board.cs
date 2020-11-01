@@ -224,6 +224,14 @@ namespace Combinations
 			Card4 = new Card();
 			Card5 = new Card();
 
+			Street = 0;
+
+			FlushLevel = 1;
+			StraightLevel = 1;
+			StraightCount = 1;
+			PairLevel = 0;
+			CardLevel = 0;
+
 			Mask = ulong.MaxValue;
 		}
 

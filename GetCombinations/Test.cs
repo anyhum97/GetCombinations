@@ -106,7 +106,7 @@ namespace Combinations
 
 		private static void CombinationTest()
 		{
-			Combination combination = new Combination(new Hand("Ks7c"), new Board("3c7s8d"));
+			Combination combination = new Combination(new Hand("Ks7c"), new Board());
 
 			Console.WriteLine(combination + "\n");
 

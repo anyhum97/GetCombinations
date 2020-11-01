@@ -29,7 +29,7 @@ namespace Combinations
 		{
 			Invalid();
 
-			if(hand.IsValid() && board.IsValid())
+			if(hand.IsValid())
 			{
 				Hand = hand;
 				Board = board;
@@ -49,7 +49,7 @@ namespace Combinations
 
 		public bool IsValid()
 		{
-			return Hand.IsValid() && Board.IsValid();
+			return Hand.IsValid();
 		}
 
 		public static bool operator == (Combination combination1, Combination combination2)
@@ -99,10 +99,13 @@ namespace Combinations
 			++levels[Hand.Card1.Suit];
 			++levels[Hand.Card2.Suit];
 
-			++levels[Board.Card1.Suit];
-			++levels[Board.Card2.Suit];
-			++levels[Board.Card3.Suit];
-			
+			if(Board.Street > 0)
+			{
+				++levels[Board.Card1.Suit];
+				++levels[Board.Card2.Suit];
+				++levels[Board.Card3.Suit];
+			}
+
 			if(Board.Street > 1)
 			{
 				++levels[Board.Card4.Suit];
@@ -113,7 +116,15 @@ namespace Combinations
 				++levels[Board.Card5.Suit];
 			}
 			
-			FlushLevel = Math.Max(Math.Max(levels[0], levels[1]), Math.Max(levels[2], levels[3]));
+			FlushLevel = 1;
+
+			for(int i=0; i<4; ++i)
+			{
+				if(levels[i] > FlushLevel)
+				{
+					FlushLevel = levels[i];
+				}
+			}
 		}
 
 		private void UpdateStraightLevel()
@@ -124,12 +135,15 @@ namespace Combinations
 
 			bool[] positions = new bool[14];
 
-			positions[Board.Card1.Denomination+1] = true;
-			positions[Board.Card2.Denomination+1] = true;
-			positions[Board.Card3.Denomination+1] = true;
-
 			positions[Hand.Card1.Denomination+1] = true;
 			positions[Hand.Card2.Denomination+1] = true;
+
+			if(Board.Street > 0)
+			{
+				positions[Board.Card1.Denomination+1] = true;
+				positions[Board.Card2.Denomination+1] = true;
+				positions[Board.Card3.Denomination+1] = true;
+			}
 
 			if(Board.Street > 1)
 			{
@@ -184,12 +198,15 @@ namespace Combinations
 		{
 			int[] denominations = new int[13];
 
-			++denominations[Board.Card1.Denomination];
-			++denominations[Board.Card2.Denomination];
-			++denominations[Board.Card3.Denomination];
-
 			++denominations[Hand.Card1.Denomination];
 			++denominations[Hand.Card2.Denomination];
+
+			if(Board.Street > 0)
+			{
+				++denominations[Board.Card1.Denomination];
+				++denominations[Board.Card2.Denomination];
+				++denominations[Board.Card3.Denomination];
+			}
 
 			if(Board.Street > 1)
 			{
@@ -260,12 +277,15 @@ namespace Combinations
 		{
 			CardLevel = 0;
 
-			CardLevel = Math.Max(CardLevel, Board.Card1.Denomination);
-			CardLevel = Math.Max(CardLevel, Board.Card2.Denomination);
-			CardLevel = Math.Max(CardLevel, Board.Card3.Denomination);
-
 			CardLevel = Math.Max(CardLevel, Hand.Card1.Denomination);
 			CardLevel = Math.Max(CardLevel, Hand.Card2.Denomination);
+
+			if(Board.Street > 0)
+			{
+				CardLevel = Math.Max(CardLevel, Board.Card1.Denomination);
+				CardLevel = Math.Max(CardLevel, Board.Card2.Denomination);
+				CardLevel = Math.Max(CardLevel, Board.Card3.Denomination);
+			}
 
 			if(Board.Street > 1)
 			{
