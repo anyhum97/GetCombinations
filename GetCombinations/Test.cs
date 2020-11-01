@@ -84,5 +84,22 @@ namespace Combinations
 
 			}
 		}
+
+		private static void BoardTest()
+		{
+			Board board1 = new Board("2c2hKdKsKh");
+
+			Console.WriteLine(board1 + "\n");
+
+			Console.WriteLine("FlushLevel: " + board1.FlushLevel);
+
+			Console.WriteLine("StraightLevel: " + board1.StraightLevel);
+
+			Console.WriteLine("StraightCount: " + board1.StraightCount);
+
+			Console.WriteLine("PairLevel: " + board1.PairLevel);
+
+			Console.ReadKey();
+		}
 	}
 }

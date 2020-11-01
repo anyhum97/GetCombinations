@@ -26,6 +26,8 @@ namespace Combinations
 
 		public int StraightCount { get; protected set; }
 
+		public int PairLevel { get; protected set; }
+
 		public Board()
 		{
 			Invalid();
@@ -477,6 +479,79 @@ namespace Combinations
 			}
 		}
 
+		private void UpdatePairLevel()
+		{
+			int[] denominations = new int[13];
+
+			++denominations[Card1.Denomination];
+			++denominations[Card2.Denomination];
+			++denominations[Card3.Denomination];
+
+			if(Street > 1)
+			{
+				++denominations[Card4.Denomination];
+			}
+			
+			if(Street > 2)
+			{
+				++denominations[Card5.Denomination];
+			}
+
+			// 0 => Nothing
+			// 1 => One Pair
+			// 2 => Two pair
+			// 3 => Three of a Kind
+			// 4 => Full House
+			// 5 => Four of a Kind
+
+			PairLevel = 0;
+
+			for(int i=0; i<13; ++i)
+			{
+				if(denominations[i] == 4)
+				{
+					PairLevel = 5;
+					return;
+				}
+
+				if(denominations[i] == 3)
+				{
+					PairLevel = 3;
+
+					for(int j=0; j<13; ++j)
+					{
+						if(i != j)
+						{
+							if(denominations[j] == 2)
+							{
+								PairLevel = 4;
+								return;
+							}
+						}
+					}
+
+					return;
+				}
+
+				if(denominations[i] == 2)
+				{
+					PairLevel = Math.Max(PairLevel, 1);
+
+					for(int j=0; j<13; ++j)
+					{
+						if(i != j)
+						{
+							if(denominations[j] == 2)
+							{
+								PairLevel = Math.Max(PairLevel, 2);
+								break;
+							}							
+						}
+					}
+				}
+			}
+		}
+
 		private void SetProperties()
 		{
 			UpdateTitle();
@@ -484,6 +559,7 @@ namespace Combinations
 
 			UpdateFlushLevel();
 			UpdateStraightLevel();
+			UpdatePairLevel();
 		}
 	}
 }

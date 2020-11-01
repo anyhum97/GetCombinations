@@ -12,6 +12,12 @@ namespace Combinations
 
 		public ulong Mask { get; protected set; }
 
+		public int IsPair { get; protected set; }
+
+		public int IsConnectors { get; protected set; }
+
+		public int IsSameSuit { get; protected set; }
+
 		public Hand()
 		{
 			Invalid();
@@ -49,7 +55,7 @@ namespace Combinations
 					Card2 = card1;
 				}
 
-				Title = Card1.Title + " " + Card2.Title;
+				SetProperties();
 			}
 		}
 
@@ -163,6 +169,61 @@ namespace Combinations
 			}
 
 			return false;
+		}
+
+		private void UpdateTitle()
+		{
+			Title = Card1.Title + " " + Card2.Title;
+		}
+
+		private void UpdateMask()
+		{
+			Mask = Card1.Mask | Card2.Mask;
+		}
+
+		private void UpdateIsPair()
+		{
+			IsPair = 0;
+
+			if(Card1.Denomination == Card2.Denomination)
+			{
+				IsPair = Card1.Denomination + 1;
+			}
+		}
+
+		private void UpdateIsConnectors()
+		{
+			IsConnectors = 0;
+
+			if(Card1.Denomination == Card2.Denomination + 1)
+			{
+				IsConnectors = Card1.Denomination;
+			}
+
+			if(Card2.Denomination == Card1.Denomination + 1)
+			{
+				IsConnectors = Card2.Denomination;
+			}
+		}
+
+		private void UpdateIsSameSuit()
+		{
+			IsSameSuit = 0;
+
+			if(Card1.Suit == Card2.Suit)
+			{
+				IsSameSuit = 1;
+			}
+		}
+
+		private void SetProperties()
+		{
+			UpdateTitle();
+			UpdateMask();
+
+			UpdateIsPair();
+			UpdateIsConnectors();
+			UpdateIsSameSuit();
 		}
 	}
 }

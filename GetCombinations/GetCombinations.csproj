@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Cards\Board.cs" />
     <Compile Include="Cards\Card.cs" />
+    <Compile Include="Cards\Combination.cs" />
     <Compile Include="Cards\Hand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
