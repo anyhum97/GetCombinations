@@ -28,6 +28,8 @@ namespace Combinations
 
 		public int PairLevel { get; protected set; }
 
+		public int CardLevel { get; protected set; }
+
 		public Board()
 		{
 			Invalid();
@@ -552,6 +554,25 @@ namespace Combinations
 			}
 		}
 
+		private void UpdateCardLevel()
+		{
+			CardLevel = 0;
+
+			CardLevel = Math.Max(CardLevel, Card1.Denomination);
+			CardLevel = Math.Max(CardLevel, Card2.Denomination);
+			CardLevel = Math.Max(CardLevel, Card3.Denomination);
+
+			if(Street > 1)
+			{
+				CardLevel = Math.Max(CardLevel, Card4.Denomination);
+			}
+
+			if(Street > 2)
+			{
+				CardLevel = Math.Max(CardLevel, Card5.Denomination);
+			}
+		}
+
 		private void SetProperties()
 		{
 			UpdateTitle();
@@ -560,6 +581,7 @@ namespace Combinations
 			UpdateFlushLevel();
 			UpdateStraightLevel();
 			UpdatePairLevel();
+			UpdateCardLevel();
 		}
 	}
 }

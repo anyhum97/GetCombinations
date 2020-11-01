@@ -87,17 +87,50 @@ namespace Combinations
 
 		private static void BoardTest()
 		{
-			Board board1 = new Board("2c2hKdKsKh");
+			Board board = new Board("2c2hKdKsKh");
 
-			Console.WriteLine(board1 + "\n");
+			Console.WriteLine(board + "\n");
 
-			Console.WriteLine("FlushLevel: " + board1.FlushLevel);
+			Console.WriteLine("FlushLevel: " + board.FlushLevel);
 
-			Console.WriteLine("StraightLevel: " + board1.StraightLevel);
+			Console.WriteLine("StraightLevel: " + board.StraightLevel);
 
-			Console.WriteLine("StraightCount: " + board1.StraightCount);
+			Console.WriteLine("StraightCount: " + board.StraightCount);
 
-			Console.WriteLine("PairLevel: " + board1.PairLevel);
+			Console.WriteLine("PairLevel: " + board.PairLevel);
+
+			Console.WriteLine("CardLevel: " + board.CardLevel);
+
+			Console.ReadKey();
+		}
+
+		private static void CombinationTest()
+		{
+			Combination combination = new Combination(new Hand("Ks7c"), new Board("3c7s8d"));
+
+			Console.WriteLine(combination + "\n");
+
+			Console.WriteLine("FlushLevel: " + combination.FlushLevel);
+
+			Console.WriteLine("StraightLevel: " + combination.StraightLevel);
+
+			Console.WriteLine("StraightCount: " + combination.StraightCount);
+
+			Console.WriteLine("PairLevel: " + combination.PairLevel);
+
+			Console.WriteLine("CardLevel: " + combination.CardLevel);
+
+			Console.WriteLine();
+
+			Console.WriteLine("FlushLevel: " + combination.Board.FlushLevel);
+
+			Console.WriteLine("StraightLevel: " + combination.Board.StraightLevel);
+
+			Console.WriteLine("StraightCount: " + combination.Board.StraightCount);
+
+			Console.WriteLine("PairLevel: " + combination.Board.PairLevel);
+
+			Console.WriteLine("CardLevel: " + combination.Board.CardLevel);
 
 			Console.ReadKey();
 		}
