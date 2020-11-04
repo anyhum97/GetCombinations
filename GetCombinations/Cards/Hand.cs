@@ -12,6 +12,18 @@ namespace Combinations
 
 		public ulong Mask { get; protected set; }
 
+		public static Hand[] DefaultHands { get; protected set; }
+
+		static Hand()
+		{
+			DefaultHands = new Hand[1326];
+
+			for(int i=0; i<1326; ++i)
+			{
+				DefaultHands[i] = new Hand(Data.HandIndex[i]);
+			}
+		}
+
 		public Hand()
 		{
 			Invalid();

@@ -12,6 +12,25 @@ namespace Combinations
 
 		public ulong Mask { get; protected set; }
 
+		public static Card[] DefaultCards { get; protected set; }
+
+		static Card()
+		{
+			DefaultCards = new Card[52];
+
+			int index = 0;
+
+			for(int i=0; i<4; ++i)
+			{
+				for(int j=0; j<13; ++j)
+				{
+					DefaultCards[index] = new Card(j, i);
+
+					++index;
+				}
+			}
+		}
+
 		public Card()
 		{
 			Invalid();
