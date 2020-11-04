@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 
 namespace Combinations
 {
@@ -16,12 +18,7 @@ namespace Combinations
 
 		static Hand()
 		{
-			DefaultHands = new Hand[1326];
-
-			for(int i=0; i<1326; ++i)
-			{
-				DefaultHands[i] = new Hand(Data.HandIndex[i]);
-			}
+			SetDefaultHands();
 		}
 
 		public Hand()
@@ -142,6 +139,93 @@ namespace Combinations
 			}
 
 			return false;
+		}
+
+		public static void SetDefaultHands()
+		{
+			DefaultHands = new Hand[1326];
+
+			int index = 0;
+
+			for(int c1=0; c1<52; ++c1)
+			{
+				Card card1 = Card.DefaultCards[c1];
+
+				for(int c2=0; c2<52; ++c2)
+				{
+					Card card2 = Card.DefaultCards[c2];
+
+					if(c2 > c1)
+					{
+						DefaultHands[index] = new Hand(card1, card2);
+
+						++index;
+					}
+				}
+			}
+		}
+
+		public static void WriteDefaultHands()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+
+			for(int i=0; i<1326; ++i)
+			{
+				stringBuilder.Append("\"");
+				stringBuilder.Append(DefaultHands[i].Title);
+				stringBuilder.Append("\",\t// ");
+				stringBuilder.Append(i);
+				stringBuilder.Append("\n");
+			}
+
+			File.WriteAllText("hands.txt", stringBuilder.ToString());
+		}
+
+		public static void WritePreflopHandIndex()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+
+			int[] PreflopHandIndex = new int[1326];
+
+			int found = 0;
+
+			for(int i=0; i<1326; ++i)
+			{
+				string str1 = DefaultHands[i].Card1.Title + DefaultHands[i].Card2.Title;
+				string str2 = DefaultHands[i].Card2.Title + DefaultHands[i].Card1.Title;
+
+				for(int j=0; j<169; ++j)
+				{
+					string str = Data.PreflopHandTable[j];
+
+					if(str.Contains(str1) || str.Contains(str2))
+					{
+						stringBuilder.Append(j);
+						stringBuilder.Append(", ");
+
+						PreflopHandIndex[i] = j;
+						++found;
+						break;
+					}
+				}
+			}
+
+			File.WriteAllText("PreflopHandeIndex.txt", stringBuilder.ToString());
+		}
+
+		public static void WriteHandMask()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+
+			int[] PreflopHandIndex = new int[1326];
+
+			for(int i=0; i<1326; ++i)
+			{
+				stringBuilder.Append(DefaultHands[i].Mask);
+				stringBuilder.Append(", ");
+			}
+
+			File.WriteAllText("mask.txt", stringBuilder.ToString());
 		}
 
 		public override string ToString()
