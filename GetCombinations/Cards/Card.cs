@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 
 namespace Combinations
 {
@@ -16,19 +18,7 @@ namespace Combinations
 
 		static Card()
 		{
-			DefaultCards = new Card[52];
-
-			int index = 0;
-
-			for(int i=0; i<4; ++i)
-			{
-				for(int j=0; j<13; ++j)
-				{
-					DefaultCards[index] = new Card(j, i);
-
-					++index;
-				}
-			}
+			SetDefaultCards();
 		}
 
 		public Card()
@@ -152,6 +142,78 @@ namespace Combinations
 			}
 
 			return false;
+		}
+
+		public static void SetDefaultCards()
+		{
+			DefaultCards = new Card[52];
+
+			int index = 0;
+
+			for(int i=0; i<4; ++i)
+			{
+				for(int j=0; j<13; ++j)
+				{
+					DefaultCards[index] = new Card(j, i);
+
+					++index;
+				}
+			}
+		}
+
+		public static void WriteDefaultCards()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+
+			for(int i=0; i<52; ++i)
+			{
+				stringBuilder.Append("\"");
+				stringBuilder.Append(DefaultCards[i].Title);
+				stringBuilder.Append("\",\t// ");
+				stringBuilder.Append(i);
+				stringBuilder.Append("\n");
+			}
+
+			File.WriteAllText("cards.txt", stringBuilder.ToString());
+		}
+		
+		public static void WriteCardMask()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+
+			for(int i=0; i<52; ++i)
+			{
+				stringBuilder.Append(DefaultCards[i].Mask);
+				stringBuilder.Append("UL, ");
+			}
+
+			File.WriteAllText("mask.txt", stringBuilder.ToString());
+		}
+
+		public static void WriteSuit()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+
+			for(int i=0; i<52; ++i)
+			{
+				stringBuilder.Append(DefaultCards[i].Suit);
+				stringBuilder.Append(", ");
+			}
+
+			File.WriteAllText("suit.txt", stringBuilder.ToString());
+		}
+
+		public static void WriteDenomination()
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+
+			for(int i=0; i<52; ++i)
+			{
+				stringBuilder.Append(DefaultCards[i].Denomination);
+				stringBuilder.Append(", ");
+			}
+
+			File.WriteAllText("denomination.txt", stringBuilder.ToString());
 		}
 
 		public override string ToString()

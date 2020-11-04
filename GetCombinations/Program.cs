@@ -137,7 +137,7 @@ namespace Combinations
 
 		private static void Main()
 		{
-			Hand.WritePreflopHandIndex();
+			
 		}
 	}
 }

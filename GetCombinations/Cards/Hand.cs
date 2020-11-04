@@ -217,12 +217,10 @@ namespace Combinations
 		{
 			StringBuilder stringBuilder = new StringBuilder();
 
-			int[] PreflopHandIndex = new int[1326];
-
 			for(int i=0; i<1326; ++i)
 			{
 				stringBuilder.Append(DefaultHands[i].Mask);
-				stringBuilder.Append(", ");
+				stringBuilder.Append("UL, ");
 			}
 
 			File.WriteAllText("mask.txt", stringBuilder.ToString());
