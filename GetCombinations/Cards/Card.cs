@@ -6,13 +6,15 @@ namespace Combinations
 {
 	public class Card
 	{
-		public string Title { get; protected set; }
+		public int CardIndex { get; protected set; }
 
 		public int Denomination { get; protected set; }
 
 		public int Suit { get; protected set; }
 
 		public ulong Mask { get; protected set; }
+
+		public string Title { get; protected set; }
 
 		public static Card[] DefaultCards { get; protected set; }
 
@@ -24,6 +26,11 @@ namespace Combinations
 		public Card()
 		{
 			Invalid();
+		}
+
+		public Card(int index)
+		{
+			Set(Data.DefaultCardDenomination[index], Data.DefaultCardSuit[index]);
 		}
 
 		public Card(int denomination, int suit)
@@ -38,17 +45,20 @@ namespace Combinations
 
 		public void Set(int denomination, int suit)
 		{
-			if(denomination > 12 || suit > 3)
+			if(denomination < 0 || denomination > 12 || suit < 0 || suit > 3)
 			{
-				Invalid();
-				return;
+				throw new Exception();
 			}
+			
+			CardIndex = 13 * suit + denomination;
+			
+			Title = Data.DefaultCardTitle[CardIndex];
+			
+			Mask = 1UL << CardIndex;
 
 			Denomination = denomination;
-			Suit = suit;
 
-			UpdateMask();
-			UpdateTitle();
+			Suit = suit;
 		}
 
 		public void Set(string str)
@@ -62,43 +72,45 @@ namespace Combinations
 
 			if(str.Length >= 2)
 			{
+				int denomination = 0;
+				int suit = 0;
+
 				switch(str[0])
 				{
-					case '2': Denomination = 0;  break;
-					case '3': Denomination = 1;  break;
-					case '4': Denomination = 2;  break;
-					case '5': Denomination = 3;  break;
-					case '6': Denomination = 4;  break;
-					case '7': Denomination = 5;  break;
-					case '8': Denomination = 6;  break;
-					case '9': Denomination = 7;  break;
-					case 'T': Denomination = 8;  break;
-					case 'J': Denomination = 9;  break;
-					case 'Q': Denomination = 10; break;
-					case 'K': Denomination = 11; break;
-					case 'A': Denomination = 12; break;
+					case '2': denomination = 0;  break;
+					case '3': denomination = 1;  break;
+					case '4': denomination = 2;  break;
+					case '5': denomination = 3;  break;
+					case '6': denomination = 4;  break;
+					case '7': denomination = 5;  break;
+					case '8': denomination = 6;  break;
+					case '9': denomination = 7;  break;
+					case 'T': denomination = 8;  break;
+					case 'J': denomination = 9;  break;
+					case 'Q': denomination = 10; break;
+					case 'K': denomination = 11; break;
+					case 'A': denomination = 12; break;
 
-					default: Invalid(); return;
+					default: return;
 				}
 
 				switch(str[1])
 				{
-					case 'c': Suit = 0; break;
-					case 'd': Suit = 1; break;
-					case 'h': Suit = 2; break;
-					case 's': Suit = 3; break;
+					case 'c': suit = 0; break;
+					case 'd': suit = 1; break;
+					case 'h': suit = 2; break;
+					case 's': suit = 3; break;
 
-					default: Invalid(); return;
+					default: return;
 				}
 
-				UpdateMask();
-				UpdateTitle();
+				Set(denomination, suit);
 			}
 		}
 
 		public bool IsValid()
 		{ 
-			if(Denomination < 13 && Suit < 4)
+			if(Mask != ulong.MaxValue)
 			{
 				return true;
 			}
@@ -112,7 +124,8 @@ namespace Combinations
 
 			Denomination = int.MaxValue;
 			Suit = int.MaxValue;
-			
+
+			CardIndex = int.MaxValue;
 			Mask = ulong.MaxValue;
 		}
 
@@ -131,14 +144,12 @@ namespace Combinations
 
 		public static bool operator != (Card Card1, Card Card2)
 		{
-			if(Card1.IsValid() == false || Card2.IsValid() == false)
+			if(Card1.IsValid() && Card2.IsValid())
 			{
-				return true;
-			}
-
-			if(Card1.Mask != Card2.Mask)
-			{
-				return true;
+				if(Card1.Mask != Card2.Mask)
+				{
+					return true;
+				}
 			}
 
 			return false;
@@ -161,73 +172,18 @@ namespace Combinations
 			}
 		}
 
-		public static void WriteDefaultCards()
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-
-			for(int i=0; i<52; ++i)
-			{
-				stringBuilder.Append("\"");
-				stringBuilder.Append(DefaultCards[i].Title);
-				stringBuilder.Append("\",\t// ");
-				stringBuilder.Append(i);
-				stringBuilder.Append("\n");
-			}
-
-			File.WriteAllText("cards.txt", stringBuilder.ToString());
-		}
-		
-		public static void WriteCardMask()
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-
-			for(int i=0; i<52; ++i)
-			{
-				stringBuilder.Append(DefaultCards[i].Mask);
-				stringBuilder.Append("UL, ");
-			}
-
-			File.WriteAllText("mask.txt", stringBuilder.ToString());
-		}
-
-		public static void WriteSuit()
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-
-			for(int i=0; i<52; ++i)
-			{
-				stringBuilder.Append(DefaultCards[i].Suit);
-				stringBuilder.Append(", ");
-			}
-
-			File.WriteAllText("suit.txt", stringBuilder.ToString());
-		}
-
-		public static void WriteDenomination()
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-
-			for(int i=0; i<52; ++i)
-			{
-				stringBuilder.Append(DefaultCards[i].Denomination);
-				stringBuilder.Append(", ");
-			}
-
-			File.WriteAllText("denomination.txt", stringBuilder.ToString());
-		}
-
 		public override string ToString()
 		{
-			return Title;
+			return string.Format("[{0}]: {1}", CardIndex, Title);
 		}
 
-		public string Text()
+		private string Text(int denomination, int suit)
 		{
 			string str = "";
 
-			if(Denomination < 13 && Suit < 4)
+			if(denomination < 13 && suit < 4)
 			{
-				switch(Denomination)
+				switch(denomination)
 				{
 					case 0: str += '2'; break;
 					case 1: str += '3'; break;
@@ -244,7 +200,7 @@ namespace Combinations
 					case 12: str += 'A'; break;
 				}
 
-				switch(Suit)
+				switch(suit)
 				{
 					case 0: str += 'c'; break;
 					case 1: str += 'd'; break;
@@ -258,16 +214,6 @@ namespace Combinations
 			}
 
 			return str;
-		}
-
-		private void UpdateMask()
-		{
-			Mask = 1UL << (Denomination + 13 * Suit);
-		}
-
-		private void UpdateTitle()
-		{
-			Title = Text();
 		}
 	}
 }

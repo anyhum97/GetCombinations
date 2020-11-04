@@ -12,6 +12,10 @@ namespace Combinations
 
 		public Card Card2 { get; protected set; }
 
+		public int HandIndex { get; protected set; }
+
+		public int PreflopHandIndex { get; protected set; }
+
 		public ulong Mask { get; protected set; }
 
 		public static Hand[] DefaultHands { get; protected set; }
@@ -58,7 +62,13 @@ namespace Combinations
 					Card2 = card1;
 				}
 
-				SetProperties();
+				HandIndex = Data.GetHandIndex(Card1.CardIndex, Card2.CardIndex);
+
+				PreflopHandIndex = Data.PreflopHandIndex[HandIndex];
+
+				Title = Data.DefaultHandTitle[HandIndex];
+
+				Mask = Card1.Mask | Card2.Mask;
 			}
 		}
 
@@ -153,10 +163,10 @@ namespace Combinations
 
 				for(int c2=0; c2<52; ++c2)
 				{
-					Card card2 = Card.DefaultCards[c2];
-
 					if(c2 > c1)
 					{
+						Card card2 = Card.DefaultCards[c2];
+
 						DefaultHands[index] = new Hand(card1, card2);
 
 						++index;
@@ -165,75 +175,19 @@ namespace Combinations
 			}
 		}
 
-		public static void WriteDefaultHands()
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-
-			for(int i=0; i<1326; ++i)
-			{
-				stringBuilder.Append("\"");
-				stringBuilder.Append(DefaultHands[i].Title);
-				stringBuilder.Append("\",\t// ");
-				stringBuilder.Append(i);
-				stringBuilder.Append("\n");
-			}
-
-			File.WriteAllText("hands.txt", stringBuilder.ToString());
-		}
-
-		public static void WritePreflopHandIndex()
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-
-			int[] PreflopHandIndex = new int[1326];
-
-			int found = 0;
-
-			for(int i=0; i<1326; ++i)
-			{
-				string str1 = DefaultHands[i].Card1.Title + DefaultHands[i].Card2.Title;
-				string str2 = DefaultHands[i].Card2.Title + DefaultHands[i].Card1.Title;
-
-				for(int j=0; j<169; ++j)
-				{
-					string str = Data.PreflopHandTable[j];
-
-					if(str.Contains(str1) || str.Contains(str2))
-					{
-						stringBuilder.Append(j);
-						stringBuilder.Append(", ");
-
-						PreflopHandIndex[i] = j;
-						++found;
-						break;
-					}
-				}
-			}
-
-			File.WriteAllText("PreflopHandeIndex.txt", stringBuilder.ToString());
-		}
-
-		public static void WriteHandMask()
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-
-			for(int i=0; i<1326; ++i)
-			{
-				stringBuilder.Append(DefaultHands[i].Mask);
-				stringBuilder.Append("UL, ");
-			}
-
-			File.WriteAllText("mask.txt", stringBuilder.ToString());
-		}
-
 		public override string ToString()
 		{
-			return Title;
+			return string.Format("[{0}]: {1}", HandIndex, Title);
 		}
 
 		public string Text()
 		{
 			return Card1.Title + " " + Card2.Title;
+		}
+
+		public string Text(string separator)
+		{
+			return Card1.Title + separator + Card2.Title;
 		}
 
 		private bool CardPattern(string str, ref string title, int start, ref int pos)
@@ -257,22 +211,6 @@ namespace Combinations
 			}
 
 			return false;
-		}
-
-		private void UpdateTitle()
-		{
-			Title = Card1.Title + " " + Card2.Title;
-		}
-
-		private void UpdateMask()
-		{
-			Mask = Card1.Mask | Card2.Mask;
-		}
-
-		private void SetProperties()
-		{
-			UpdateTitle();
-			UpdateMask();
 		}
 	}
 }

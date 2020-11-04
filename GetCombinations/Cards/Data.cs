@@ -1019,7 +1019,7 @@ namespace Combinations
 			"2s2h, 2s2d, 2s2c, 2h2d, 2h2c, 2d2c"
 		};
 
-		public static readonly string[] CardTitle = new string[52]
+		public static readonly string[] DefaultCardTitle = new string[52]
 		{
 			"2c",	// 0
 			"3c",	// 1
@@ -1075,7 +1075,7 @@ namespace Combinations
 			"As",	// 51
 		};
 
-		public static readonly string[] HandTitle = new string[1326]
+		public static readonly string[] DefaultHandTitle = new string[1326]
 		{
 			"3c 2c",	// 0
 			"4c 2c",	// 1
@@ -2586,6 +2586,16 @@ namespace Combinations
 		private static readonly int[] HandIndexOffset = new int[51]
 		{
 			-1, 49, 98, 146, 193, 239, 284, 328, 371, 413, 454, 494, 533, 571, 608, 644, 679, 713, 746, 778, 809, 839, 868, 896, 923, 949, 974, 998, 1021, 1043, 1064, 1084, 1103, 1121, 1138, 1154, 1169, 1183, 1196, 1208, 1219, 1229, 1238, 1246, 1253, 1259, 1264, 1268, 1271, 1273, 1274
+		};
+		
+		public static readonly int[] DefaultCardDenomination = new int[52]
+		{
+			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+		};
+
+		public static readonly int[] DefaultCardSuit = new int[52]
+		{
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 		};
 
 		public static int GetSuit(int card)
