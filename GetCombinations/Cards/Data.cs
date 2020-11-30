@@ -2598,6 +2598,547 @@ namespace Combinations
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 		};
 
+		public const int Nothing = 0;
+		public const int OnePair = 1;
+		public const int TwoPairs = 2;
+		public const int Trips = 3;
+		public const int Straight = 4;
+		public const int Flush = 5;
+		public const int FullHouse = 6;
+		public const int Quads = 7;
+		public const int StraightFlush = 8;
+
+		public static uint GetTexasHoldemCombinationRank(ulong CardsMask)
+		{
+			uint cCardMask = (uint)((CardsMask >> 00) & 0x1fffUL);
+			uint dCardMask = (uint)((CardsMask >> 13) & 0x1fffUL);
+			uint hCardMask = (uint)((CardsMask >> 26) & 0x1fffUL);
+			uint sCardMask = (uint)((CardsMask >> 39) & 0x1fffUL);
+
+			uint CardCount = 0;
+			
+			CardCount += BitCountTable[(CardsMask >> 00) & 0x1fff];
+			CardCount += BitCountTable[(CardsMask >> 13) & 0x1fff];
+			CardCount += BitCountTable[(CardsMask >> 26) & 0x1fff];
+			CardCount += BitCountTable[(CardsMask >> 39) & 0x1fff];
+
+			uint DenominationMask = cCardMask | dCardMask | hCardMask | sCardMask;
+
+			uint DenominationCount = BitCountTable[DenominationMask];
+
+			uint DuplicateCount = CardCount - DenominationCount;
+			
+			uint CombinationRank = 0;
+
+			if(DenominationCount >= 5)
+			{
+				if(BitCountTable[sCardMask] >= 5)
+				{
+					if(StraightValueTable[sCardMask] != 0)
+					{
+						return 134217728 + (StraightValueTable[sCardMask] << 16);
+					}
+					
+					CombinationRank = 83886080 + FlushValueTable[sCardMask];
+				}
+				
+				else if(BitCountTable[cCardMask] >= 5)
+				{
+					if(StraightValueTable[cCardMask] != 0)
+					{
+						return 134217728 + (StraightValueTable[cCardMask] << 16);
+					}
+		
+					CombinationRank = 83886080 + FlushValueTable[cCardMask];
+				}
+				
+				else if (BitCountTable[dCardMask] >= 5)
+				{
+					if(StraightValueTable[dCardMask] != 0)
+					{
+						return 134217728 + (StraightValueTable[dCardMask] << 16);
+					}
+					
+					CombinationRank = 83886080 + FlushValueTable[dCardMask];
+				}
+				
+				else if(BitCountTable[hCardMask] >= 5)
+				{
+					if(StraightValueTable[hCardMask] != 0)
+					{
+						return 134217728 + (StraightValueTable[hCardMask] << 16);
+					}
+					
+					CombinationRank = 83886080 + FlushValueTable[hCardMask];
+				}
+				else
+				{
+					uint StraightValue = StraightValueTable[DenominationMask];
+					
+					if(StraightValue != 0)
+					{
+						CombinationRank = 67108864 + (StraightValue << 16);
+					}
+				}
+				
+				if(CombinationRank != 0 && DuplicateCount < 3)
+				{
+					return CombinationRank;
+				}
+			}
+
+			switch(DuplicateCount)
+			{
+				case 0: return FlushValueTable[DenominationMask];
+				
+				case 1:
+				{
+					uint TwoMask = DenominationMask ^ cCardMask ^ dCardMask ^ hCardMask ^ sCardMask;
+
+					CombinationRank = 16777216 + (FirstCardValueTable[TwoMask] << 16);
+
+					long KickersValue = FlushValueTable[DenominationMask ^ TwoMask] >> 4 & ~0x0000000F;
+
+					CombinationRank += (uint)KickersValue;
+
+					return CombinationRank;
+				}
+
+				case 2:
+				{
+					uint TwoMask = DenominationMask ^ cCardMask ^ dCardMask ^ hCardMask ^ sCardMask;
+					
+					if(TwoMask != 0)
+					{
+						uint TempValue = DenominationMask ^ TwoMask;
+						
+						CombinationRank = (33554432 + (FlushValueTable[TwoMask] & (0x000F0000 | 0x0000F000)) + (FirstCardValueTable[TempValue] << 8));
+						
+						return CombinationRank;
+					}
+					else
+					{
+						uint ThreeMask = (cCardMask & dCardMask | hCardMask & sCardMask) & (cCardMask & hCardMask | dCardMask & sCardMask);
+						
+						CombinationRank = 50331648 + (FirstCardValueTable[ThreeMask] << 16);
+						
+						uint TempValue = DenominationMask ^ ThreeMask;
+
+						uint SecondCardValue = FirstCardValueTable[TempValue];
+			    
+						CombinationRank += SecondCardValue << 12;
+
+						TempValue ^= 1U << (int) SecondCardValue;
+
+						CombinationRank += FirstCardValueTable[TempValue] << 8;
+						
+						return CombinationRank;
+					}
+				}
+
+				default:
+				{
+					uint FourMask = hCardMask & dCardMask & cCardMask & sCardMask;
+
+					if(FourMask != 0)
+					{
+						uint FirstCardValue = FirstCardValueTable[FourMask];
+
+						CombinationRank = (117440512 + (FirstCardValue << 16) + (FirstCardValueTable[DenominationMask ^ 1U << (int) FirstCardValue] << 12));
+	            
+						return CombinationRank;
+					}
+
+					uint TwoMask = DenominationMask ^ cCardMask ^ dCardMask ^ hCardMask ^ sCardMask;
+
+					if(BitCountTable[TwoMask] != DuplicateCount)
+					{	
+						uint ThreeMask = (cCardMask & dCardMask | hCardMask & sCardMask) & (cCardMask & hCardMask | dCardMask & sCardMask);
+						
+						CombinationRank = 100663296;
+						
+						uint FirstCardValue = FirstCardValueTable[ThreeMask];
+
+						CombinationRank += FirstCardValue << 16;
+						
+						uint TempValue = (TwoMask | ThreeMask) ^ 1U << (int) FirstCardValue;
+
+						CombinationRank += FirstCardValueTable[TempValue] << 12;
+						
+						return CombinationRank;
+					}
+
+					if(CombinationRank != 0)
+					{
+						return CombinationRank;
+					}
+					
+					CombinationRank = 33554432;
+
+					uint firstCardValue = FirstCardValueTable[TwoMask];
+					
+					CombinationRank += firstCardValue << 16;
+					
+					uint secondCardValue = FirstCardValueTable[TwoMask ^ 1 << (int) firstCardValue];
+					
+					CombinationRank += secondCardValue << 12;
+
+					CombinationRank += FirstCardValueTable[DenominationMask ^ 1U << (int) firstCardValue ^ 1 << (int) secondCardValue] << 8;
+					
+					return CombinationRank;
+				}
+			}
+		}
+
+		public static int GetCombination(ulong board, ulong hand)
+		{
+			ulong total = board | hand;
+
+			uint cBoardCardMask = (uint)((board >> 00) & 0x1fffUL);
+			uint dBoardCardMask = (uint)((board >> 13) & 0x1fffUL);
+			uint hBoardCardMask = (uint)((board >> 26) & 0x1fffUL);
+			uint sBoardCardMask = (uint)((board >> 39) & 0x1fffUL);
+			
+			uint cTotalCardMask = (uint)((total >> 00) & 0x1fffUL);
+			uint dTotalCardMask = (uint)((total >> 13) & 0x1fffUL);
+			uint hTotalCardMask = (uint)((total >> 26) & 0x1fffUL);
+			uint sTotalCardMask = (uint)((total >> 39) & 0x1fffUL);
+
+			uint cBoardFlushCards = BitCountTable[cBoardCardMask];
+			uint dBoardFlushCards = BitCountTable[dBoardCardMask];
+			uint hBoardFlushCards = BitCountTable[hBoardCardMask];
+			uint sBoardFlushCards = BitCountTable[sBoardCardMask];
+
+			uint cTotalFlushCards = BitCountTable[cTotalCardMask];
+			uint dTotalFlushCards = BitCountTable[dTotalCardMask];
+			uint hTotalFlushCards = BitCountTable[hTotalCardMask];
+			uint sTotalFlushCards = BitCountTable[sTotalCardMask];
+
+			uint BoardCardCount = 0;
+			
+			BoardCardCount += BitCountTable[(board >> 00) & 0x1fff];
+			
+			BoardCardCount += BitCountTable[(board >> 13) & 0x1fff];
+			
+			BoardCardCount += BitCountTable[(board >> 26) & 0x1fff];
+			
+			BoardCardCount += BitCountTable[(board >> 39) & 0x1fff];
+
+			uint TotalCardCount = 0;
+			
+			TotalCardCount += BitCountTable[(total >> 00) & 0x1fff];
+			
+			TotalCardCount += BitCountTable[(total >> 13) & 0x1fff];
+			
+			TotalCardCount += BitCountTable[(total >> 26) & 0x1fff];
+			
+			TotalCardCount += BitCountTable[(total >> 39) & 0x1fff];
+
+			uint BoardDenominationMask = cBoardCardMask | dBoardCardMask | hBoardCardMask | sBoardCardMask;
+
+			uint TotalDenominationMask = cTotalCardMask | dTotalCardMask | hTotalCardMask | sTotalCardMask;
+
+			uint BoardDenominationCount = BitCountTable[BoardDenominationMask];
+
+			uint TotalDenominationCount = BitCountTable[TotalDenominationMask];
+
+			uint BoardDuplicateCount = BoardCardCount - BoardDenominationCount;
+
+			uint TotalDuplicateCount = TotalCardCount - TotalDenominationCount;
+
+			bool BoardHasFlush = false;
+
+			bool BoardHasStraight = false;
+
+			if(TotalDenominationCount >= 5)
+			{
+				if(cTotalFlushCards >= 5)
+				{
+					uint cBoardStraightValue = StraightValueTable[cBoardCardMask];
+
+					uint cTotalStraightValue = StraightValueTable[cTotalCardMask];
+
+					if(cTotalStraightValue > cBoardStraightValue)
+					{
+						// Hero Has Straight Flush (c)
+
+						return StraightFlush;
+					}
+
+					if(cBoardStraightValue > 0)
+					{
+						// Board Has Straight Flush (c)
+						
+						return Nothing;
+					}
+
+					if(cBoardFlushCards == 5)
+					{
+						uint cBoardFlushValue = FlushValueTable[cBoardCardMask];
+
+						uint cTotalFlushValue = FlushValueTable[cTotalCardMask];
+
+						if(cTotalFlushValue > cBoardFlushValue)
+						{
+							// Hero Has Flush (c)
+
+							return Flush;
+						}
+
+						BoardHasFlush = true;
+					}
+					else
+					{
+						// Hero Has Flush (c)
+
+						return Flush;
+					}
+				}
+
+				if(dTotalFlushCards >= 5)
+				{
+					uint dBoardStraightValue = StraightValueTable[dBoardCardMask];
+
+					uint dTotalStraightValue = StraightValueTable[dTotalCardMask];
+
+					if(dTotalStraightValue > dBoardStraightValue)
+					{
+						// Hero Has Straight Flush (d)
+
+						return StraightFlush;
+					}
+
+					if(dBoardStraightValue > 0)
+					{
+						// Board Has Straight Flush (d)
+						
+						return Nothing;
+					}
+
+					if(dBoardFlushCards == 5)
+					{
+						uint dBoardFlushValue = FlushValueTable[dBoardCardMask];
+
+						uint dTotalFlushValue = FlushValueTable[dTotalCardMask];
+
+						if(dTotalFlushValue > dBoardFlushValue)
+						{
+							// Hero Has Flush (d)
+
+							return Flush;
+						}
+
+						BoardHasFlush = true;
+					}
+					else
+					{
+						// Hero Has Flush (d)
+
+						return Flush;
+					}
+				}
+
+				if(hTotalFlushCards >= 5)
+				{
+					uint hBoardStraightValue = StraightValueTable[hBoardCardMask];
+
+					uint hTotalStraightValue = StraightValueTable[hTotalCardMask];
+
+					if(hTotalStraightValue > hBoardStraightValue)
+					{
+						// Hero Has Straight Flush (h)
+
+						return StraightFlush;
+					}
+
+					if(hBoardStraightValue > 0)
+					{
+						// Board Has Straight Flush (h)
+						
+						return Nothing;
+					}
+
+					if(hBoardFlushCards == 5)
+					{
+						uint hBoardFlushValue = FlushValueTable[hBoardCardMask];
+
+						uint hTotalFlushValue = FlushValueTable[hTotalCardMask];
+
+						if(hTotalFlushValue > hBoardFlushValue)
+						{
+							// Hero Has Flush (h)
+
+							return Flush;
+						}
+
+						BoardHasFlush = true;
+					}
+					else
+					{
+						// Hero Has Flush (h)
+
+						return Flush;
+					}
+				}
+				
+				if(sTotalFlushCards >= 5)
+				{
+					uint sBoardStraightValue = StraightValueTable[sBoardCardMask];
+
+					uint sTotalStraightValue = StraightValueTable[sTotalCardMask];
+
+					if(sTotalStraightValue > sBoardStraightValue)
+					{
+						// Hero Has Straight Flush (s)
+
+						return StraightFlush;
+					}
+
+					if(sBoardStraightValue > 0)
+					{
+						// Board Has Straight Flush (s)
+						
+						return Nothing;
+					}
+
+					if(sBoardFlushCards == 5)
+					{
+						uint sBoardFlushValue = FlushValueTable[sBoardCardMask];
+
+						uint sTotalFlushValue = FlushValueTable[sTotalCardMask];
+
+						if(sTotalFlushValue > sBoardFlushValue)
+						{
+							// Hero Has Flush (s)
+
+							return Flush;
+						}
+
+						BoardHasFlush = true;
+					}
+					else
+					{
+						// Hero Has Flush (s)
+
+						return Flush;
+					}
+				}
+
+				uint BoardStraightValue = StraightValueTable[BoardDenominationMask];
+
+				uint TotalStraightValue = StraightValueTable[TotalDenominationMask];
+
+				if(BoardHasFlush == false)
+				{
+					if(TotalStraightValue > BoardStraightValue)
+					{
+						// Hero Has Straight
+
+						return Straight;
+					}
+				}
+
+				if(BoardStraightValue > 0)
+				{
+					BoardHasStraight = true;
+				}
+			}
+
+			if(TotalDuplicateCount == 0)
+			{
+				return Nothing;
+			}
+
+			if(BoardHasFlush || BoardHasStraight)
+			{
+				if(TotalDuplicateCount < 3)
+				{
+					return Nothing;
+				}
+			}
+
+			uint TotalTwoMask = TotalDenominationMask ^ cTotalCardMask ^ dTotalCardMask ^ hTotalCardMask ^ sTotalCardMask;
+
+			if(TotalDuplicateCount > BoardDuplicateCount)
+			{
+				if(TotalDuplicateCount == 1)
+				{
+					return OnePair;
+				}
+
+				if(TotalDuplicateCount == 2)
+				{
+					if(TotalTwoMask != 0)
+					{
+						if(BoardDuplicateCount == 0)
+						{
+							// Hero Has Two Pairs
+
+							return TwoPairs;
+						}
+						else
+						{
+							// Hero Has One Pair
+
+							return OnePair;
+						}
+					}
+					else
+					{
+						// Hero Has Trips
+
+						return Trips;
+					}
+				}
+			}
+			
+			uint TotalFourMask = hTotalCardMask & dTotalCardMask & cTotalCardMask & sTotalCardMask;
+
+			if(TotalFourMask != 0)
+			{
+				// Board or Hero Has Four of a Kind
+
+				return Quads;
+			}
+
+			if(BitCountTable[TotalTwoMask] != TotalDuplicateCount)
+			{
+				if(TotalDuplicateCount != 1 && TotalDuplicateCount != 2)
+				{
+					// Board or Hero Has Full House
+
+					return FullHouse;
+				}
+			}
+
+			if(TotalDuplicateCount == 3)
+			{
+				uint BoardTwoMask = BoardDenominationMask ^ cBoardCardMask ^ dBoardCardMask ^ hBoardCardMask ^ sBoardCardMask;
+
+				uint BoardFirstCardValue = FirstCardValueTable[BoardTwoMask];
+
+				uint TotalFirstCardValue = FirstCardValueTable[TotalTwoMask];
+
+				uint BoardSecondCardValue = FirstCardValueTable[BoardTwoMask ^ 1 << (int) BoardFirstCardValue];
+
+				uint TotalSecondCardValue = FirstCardValueTable[TotalTwoMask ^ 1 << (int) TotalFirstCardValue];
+
+				if(TotalSecondCardValue > BoardSecondCardValue)
+				{
+					if(BoardDuplicateCount == 0)
+					{
+						return TwoPairs;
+					}
+					else
+					{
+						return OnePair;
+					}
+				}
+			}
+
+			return Nothing;
+		}
+
 		public static int GetHandIndex(int card1, int card2)
 		{
 			if(card1 > card2)

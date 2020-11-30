@@ -37,618 +37,6 @@ namespace Combinations
 			return "Invalid Combination";
 		}
 
-		private static int GetCombination(ulong board, ulong hand)
-		{
-			ulong total = board | hand;
-
-			uint cBoardCardMask = (uint)((board >> 00) & 0x1fffUL);
-			uint dBoardCardMask = (uint)((board >> 13) & 0x1fffUL);
-			uint hBoardCardMask = (uint)((board >> 26) & 0x1fffUL);
-			uint sBoardCardMask = (uint)((board >> 39) & 0x1fffUL);
-			
-			uint cTotalCardMask = (uint)((total >> 00) & 0x1fffUL);
-			uint dTotalCardMask = (uint)((total >> 13) & 0x1fffUL);
-			uint hTotalCardMask = (uint)((total >> 26) & 0x1fffUL);
-			uint sTotalCardMask = (uint)((total >> 39) & 0x1fffUL);
-
-			uint cTotalFlushCards = Data.BitCountTable[cTotalCardMask];
-			uint dTotalFlushCards = Data.BitCountTable[dTotalCardMask];
-			uint hTotalFlushCards = Data.BitCountTable[hTotalCardMask];
-			uint sTotalFlushCards = Data.BitCountTable[sTotalCardMask];
-
-			uint BoardCardCount = 0;
-			
-			BoardCardCount += Data.BitCountTable[(board >> 00) & 0x1fffUL];
-			
-			BoardCardCount += Data.BitCountTable[(board >> 13) & 0x1fffUL];
-			
-			BoardCardCount += Data.BitCountTable[(board >> 26) & 0x1fffUL];
-			
-			BoardCardCount += Data.BitCountTable[(board >> 39) & 0x1fffUL];
-
-			uint TotalCardCount = 0;
-			
-			TotalCardCount += Data.BitCountTable[(total >> 00) & 0x1fffUL];
-			
-			TotalCardCount += Data.BitCountTable[(total >> 13) & 0x1fffUL];
-			
-			TotalCardCount += Data.BitCountTable[(total >> 26) & 0x1fffUL];
-			
-			TotalCardCount += Data.BitCountTable[(total >> 39) & 0x1fffUL];
-
-			uint BoardDenominationMask = cBoardCardMask | dBoardCardMask | hBoardCardMask | sBoardCardMask;
-
-			uint TotalDenominationMask = cTotalCardMask | dTotalCardMask | hTotalCardMask | sTotalCardMask;
-
-			uint BoardDenominationCount = Data.BitCountTable[BoardDenominationMask];
-
-			uint TotalDenominationCount = Data.BitCountTable[TotalDenominationMask];
-
-			uint BoardDuplicateCount = BoardCardCount - BoardDenominationCount;
-
-			uint TotalDuplicateCount = TotalCardCount - TotalDenominationCount;
-
-			bool BoardHasFlush = false;
-
-			bool BoardHasStraight = false;
-
-			if(TotalDenominationCount >= 5)
-			{
-				if(cTotalFlushCards >= 5)
-				{
-					uint cBoardStraightValue = Data.StraightValueTable[cBoardCardMask];
-
-					uint cTotalStraightValue = Data.StraightValueTable[cTotalCardMask];
-
-					if(cTotalStraightValue > cBoardStraightValue)
-					{
-						// Hero Has Straight Flush (c)
-
-						return StraightFlush;
-					}
-
-					if(cBoardStraightValue > 0)
-					{
-						// Board Has Straight Flush (c)
-
-						return Nothing;
-					}
-
-					uint cBoardFlushValue = Data.FlushValueTable[cBoardCardMask];
-
-					uint cTotalFlushValue = Data.FlushValueTable[cTotalCardMask];
-
-					if(cTotalFlushValue > cBoardFlushValue)
-					{
-						// Hero Has Flush (c)
-
-						return Flush;
-					}
-
-					if(cBoardFlushValue > 0)
-					{
-						BoardHasFlush = true;
-					}
-				}
-
-				if(dTotalFlushCards >= 5)
-				{
-					uint dBoardStraightValue = Data.StraightValueTable[dBoardCardMask];
-
-					uint dTotalStraightValue = Data.StraightValueTable[dTotalCardMask];
-
-					if(dTotalStraightValue > dBoardStraightValue)
-					{
-						// Hero Has Straight Flush (d)
-
-						return StraightFlush;
-					}
-
-					if(dBoardStraightValue > 0)
-					{
-						// Board Has Straight Flush (d)
-
-						return Nothing;
-					}
-
-					uint dBoardFlushValue = Data.FlushValueTable[dBoardCardMask];
-
-					uint dTotalFlushValue = Data.FlushValueTable[dTotalCardMask];
-
-					if(dTotalFlushValue > dBoardFlushValue)
-					{
-						// Hero Has Flush (d)
-
-						return Flush;
-					}
-
-					if(dBoardFlushValue > 0)
-					{
-						BoardHasFlush = true;
-					}
-				}
-
-				if(hTotalFlushCards >= 5)
-				{
-					uint hBoardStraightValue = Data.StraightValueTable[hBoardCardMask];
-
-					uint hTotalStraightValue = Data.StraightValueTable[hTotalCardMask];
-
-					if(hTotalStraightValue > hBoardStraightValue)
-					{
-						// Hero Has Straight Flush (h)
-
-						return StraightFlush;
-					}
-
-					if(hBoardStraightValue > 0)
-					{
-						// Board Has Straight Flush (h)
-
-						return Nothing;
-					}
-
-					uint hBoardFlushValue = Data.FlushValueTable[hBoardCardMask];
-
-					uint hTotalFlushValue = Data.FlushValueTable[hTotalCardMask];
-
-					if(hTotalFlushValue > hBoardFlushValue)
-					{
-						// Hero Has Flush (h)
-
-						return Flush;
-					}
-
-					if(hBoardFlushValue > 0)
-					{
-						BoardHasFlush = true;
-					}
-				}
-				
-				if(sTotalFlushCards >= 5)
-				{
-					uint sBoardStraightValue = Data.StraightValueTable[sBoardCardMask];
-
-					uint sTotalStraightValue = Data.StraightValueTable[sTotalCardMask];
-
-					if(sTotalStraightValue > sBoardStraightValue)
-					{
-						// Hero Has Straight Flush (s)
-
-						return StraightFlush;
-					}
-
-					if(sBoardStraightValue > 0)
-					{
-						// Board Has Straight Flush (s)
-
-						return Nothing;
-					}
-
-					uint sBoardFlushValue = Data.FlushValueTable[sBoardCardMask];
-
-					uint sTotalFlushValue = Data.FlushValueTable[sTotalCardMask];
-
-					if(sTotalFlushValue > sBoardFlushValue)
-					{
-						// Hero Has Flush (s)
-
-						return Flush;
-					}
-
-					if(sBoardFlushValue > 0)
-					{
-						BoardHasFlush = true;
-					}
-				}
-
-				uint BoardStraightValue = Data.StraightValueTable[BoardDenominationMask];
-
-				uint TotalStraightValue = Data.StraightValueTable[TotalDenominationMask];
-
-				if(BoardHasFlush == false)
-				{
-					if(TotalStraightValue > BoardStraightValue)
-					{
-						// Hero Has Straight
-
-						return Straight;
-					}
-				}
-
-				if(BoardStraightValue > 0)
-				{
-					BoardHasStraight = true;
-				}
-			}
-
-			if(TotalDuplicateCount == 0)
-			{
-				return Nothing;
-			}
-
-			if(BoardHasFlush || BoardHasStraight)
-			{
-				if(TotalDuplicateCount < 3)
-				{
-					return Nothing;
-				}
-			}
-
-			uint TotalTwoMask = TotalDenominationMask ^ cTotalCardMask ^ dTotalCardMask ^ hTotalCardMask ^ sTotalCardMask;
-
-			if(TotalDuplicateCount > BoardDuplicateCount)
-			{
-				if(TotalDuplicateCount == 1)
-				{
-					return OnePair;
-				}
-
-				if(TotalDuplicateCount == 2)
-				{
-					if(TotalTwoMask != 0)
-					{
-						// Hero Has Two Pairs
-
-						return TwoPairs;
-					}
-					else
-					{
-						// Hero Has Trips
-
-						return Trips;
-					}
-				}
-			}
-
-			uint TotalFourMask = hTotalCardMask & dTotalCardMask & cTotalCardMask & sTotalCardMask;
-
-			if(TotalFourMask != 0)
-			{
-				// Board or Hero Has Four of a Kind
-
-				return Quads;
-			}
-
-			if(Data.BitCountTable[TotalTwoMask] != TotalDuplicateCount)
-			{
-				if(TotalDuplicateCount != 1 && TotalDuplicateCount != 2)
-				{
-					// Board or Hero Has Full House
-
-					return FullHouse;
-				}
-			}
-
-			if(TotalDuplicateCount == 3 && BoardDuplicateCount == 2)
-			{
-				uint BoardTwoMask = BoardDenominationMask ^ cBoardCardMask ^ dBoardCardMask ^ hBoardCardMask ^ sBoardCardMask;
-
-				uint BoardFirstCardValue = Data.FirstCardValueTable[BoardTwoMask];
-
-				uint TotalFirstCardValue = Data.FirstCardValueTable[TotalTwoMask];
-
-				uint BoardSecondCardValue = Data.FirstCardValueTable[BoardTwoMask ^ 1 << (int) BoardFirstCardValue];
-
-				uint TotalSecondCardValue = Data.FirstCardValueTable[TotalTwoMask ^ 1 << (int) TotalFirstCardValue];
-
-				if(TotalSecondCardValue > BoardSecondCardValue)
-				{
-					// Hero Has Two Pairs
-
-					return TwoPairs;
-				}
-			}
-
-			return Nothing;
-		}
-
-		private static int GetCombinationSilent(ulong board, ulong hand)
-		{
-			ulong total = board | hand;
-
-			uint cBoardCardMask = (uint)((board >> 00) & 0x1fffUL);
-			uint dBoardCardMask = (uint)((board >> 13) & 0x1fffUL);
-			uint hBoardCardMask = (uint)((board >> 26) & 0x1fffUL);
-			uint sBoardCardMask = (uint)((board >> 39) & 0x1fffUL);
-			
-			uint cTotalCardMask = (uint)((total >> 00) & 0x1fffUL);
-			uint dTotalCardMask = (uint)((total >> 13) & 0x1fffUL);
-			uint hTotalCardMask = (uint)((total >> 26) & 0x1fffUL);
-			uint sTotalCardMask = (uint)((total >> 39) & 0x1fffUL);
-
-			uint cTotalFlushCards = Data.BitCountTable[cTotalCardMask];
-			uint dTotalFlushCards = Data.BitCountTable[dTotalCardMask];
-			uint hTotalFlushCards = Data.BitCountTable[hTotalCardMask];
-			uint sTotalFlushCards = Data.BitCountTable[sTotalCardMask];
-
-			uint BoardCardCount = 0;
-			
-			BoardCardCount += Data.BitCountTable[(board >> 00) & 0x1fffUL];
-			
-			BoardCardCount += Data.BitCountTable[(board >> 13) & 0x1fffUL];
-			
-			BoardCardCount += Data.BitCountTable[(board >> 26) & 0x1fffUL];
-			
-			BoardCardCount += Data.BitCountTable[(board >> 39) & 0x1fffUL];
-
-			uint TotalCardCount = 0;
-			
-			TotalCardCount += Data.BitCountTable[(total >> 00) & 0x1fffUL];
-			
-			TotalCardCount += Data.BitCountTable[(total >> 13) & 0x1fffUL];
-			
-			TotalCardCount += Data.BitCountTable[(total >> 26) & 0x1fffUL];
-			
-			TotalCardCount += Data.BitCountTable[(total >> 39) & 0x1fffUL];
-
-			uint BoardDenominationMask = cBoardCardMask | dBoardCardMask | hBoardCardMask | sBoardCardMask;
-
-			uint TotalDenominationMask = cTotalCardMask | dTotalCardMask | hTotalCardMask | sTotalCardMask;
-
-			uint BoardDenominationCount = Data.BitCountTable[BoardDenominationMask];
-
-			uint TotalDenominationCount = Data.BitCountTable[TotalDenominationMask];
-
-			uint BoardDuplicateCount = BoardCardCount - BoardDenominationCount;
-
-			uint TotalDuplicateCount = TotalCardCount - TotalDenominationCount;
-
-			bool BoardHasFlush = false;
-
-			bool BoardHasStraight = false;
-
-			if(TotalDenominationCount >= 5)
-			{
-				if(cTotalFlushCards >= 5)
-				{
-					uint cBoardStraightValue = Data.StraightValueTable[cBoardCardMask];
-
-					uint cTotalStraightValue = Data.StraightValueTable[cTotalCardMask];
-
-					if(cTotalStraightValue > cBoardStraightValue)
-					{
-						// Hero Has Straight Flush (c)
-
-						return StraightFlush;
-					}
-
-					if(cBoardStraightValue > 0)
-					{
-						// Board Has Straight Flush (c)
-
-						return Nothing;
-					}
-
-					uint cBoardFlushValue = Data.FlushValueTable[cBoardCardMask];
-
-					uint cTotalFlushValue = Data.FlushValueTable[cTotalCardMask];
-
-					if(cTotalFlushValue > cBoardFlushValue)
-					{
-						// Hero Has Flush (c)
-
-						return Flush;
-					}
-
-					if(cBoardFlushValue > 0)
-					{
-						BoardHasFlush = true;
-					}
-				}
-
-				if(dTotalFlushCards >= 5)
-				{
-					uint dBoardStraightValue = Data.StraightValueTable[dBoardCardMask];
-
-					uint dTotalStraightValue = Data.StraightValueTable[dTotalCardMask];
-
-					if(dTotalStraightValue > dBoardStraightValue)
-					{
-						// Hero Has Straight Flush (d)
-
-						return StraightFlush;
-					}
-
-					if(dBoardStraightValue > 0)
-					{
-						// Board Has Straight Flush (d)
-
-						return Nothing;
-					}
-
-					uint dBoardFlushValue = Data.FlushValueTable[dBoardCardMask];
-
-					uint dTotalFlushValue = Data.FlushValueTable[dTotalCardMask];
-
-					if(dTotalFlushValue > dBoardFlushValue)
-					{
-						// Hero Has Flush (d)
-
-						return Flush;
-					}
-
-					if(dBoardFlushValue > 0)
-					{
-						BoardHasFlush = true;
-					}
-				}
-
-				if(hTotalFlushCards >= 5)
-				{
-					uint hBoardStraightValue = Data.StraightValueTable[hBoardCardMask];
-
-					uint hTotalStraightValue = Data.StraightValueTable[hTotalCardMask];
-
-					if(hTotalStraightValue > hBoardStraightValue)
-					{
-						// Hero Has Straight Flush (h)
-
-						return StraightFlush;
-					}
-
-					if(hBoardStraightValue > 0)
-					{
-						// Board Has Straight Flush (h)
-
-						return Nothing;
-					}
-
-					uint hBoardFlushValue = Data.FlushValueTable[hBoardCardMask];
-
-					uint hTotalFlushValue = Data.FlushValueTable[hTotalCardMask];
-
-					if(hTotalFlushValue > hBoardFlushValue)
-					{
-						// Hero Has Flush (h)
-
-						return Flush;
-					}
-
-					if(hBoardFlushValue > 0)
-					{
-						BoardHasFlush = true;
-					}
-				}
-				
-				if(sTotalFlushCards >= 5)
-				{
-					uint sBoardStraightValue = Data.StraightValueTable[sBoardCardMask];
-
-					uint sTotalStraightValue = Data.StraightValueTable[sTotalCardMask];
-
-					if(sTotalStraightValue > sBoardStraightValue)
-					{
-						// Hero Has Straight Flush (s)
-
-						return StraightFlush;
-					}
-
-					if(sBoardStraightValue > 0)
-					{
-						// Board Has Straight Flush (s)
-
-						return Nothing;
-					}
-
-					uint sBoardFlushValue = Data.FlushValueTable[sBoardCardMask];
-
-					uint sTotalFlushValue = Data.FlushValueTable[sTotalCardMask];
-
-					if(sTotalFlushValue > sBoardFlushValue)
-					{
-						// Hero Has Flush (s)
-
-						return Flush;
-					}
-
-					if(sBoardFlushValue > 0)
-					{
-						BoardHasFlush = true;
-					}
-				}
-
-				uint BoardStraightValue = Data.StraightValueTable[BoardDenominationMask];
-
-				uint TotalStraightValue = Data.StraightValueTable[TotalDenominationMask];
-
-				if(BoardHasFlush == false)
-				{
-					if(TotalStraightValue > BoardStraightValue)
-					{
-						// Hero Has Straight
-
-						return Straight;
-					}
-				}
-
-				if(BoardStraightValue > 0)
-				{
-					BoardHasStraight = true;
-				}
-			}
-
-			if(TotalDuplicateCount == 0)
-			{
-				return Nothing;
-			}
-
-			if(BoardHasFlush || BoardHasStraight)
-			{
-				if(TotalDuplicateCount < 3)
-				{
-					return Nothing;
-				}
-			}
-
-			uint TotalTwoMask = TotalDenominationMask ^ cTotalCardMask ^ dTotalCardMask ^ hTotalCardMask ^ sTotalCardMask;
-
-			if(TotalDuplicateCount > BoardDuplicateCount)
-			{
-				if(TotalDuplicateCount == 1)
-				{
-					return OnePair;
-				}
-
-				if(TotalDuplicateCount == 2)
-				{
-					if(TotalTwoMask != 0)
-					{
-						// Hero Has Two Pairs
-
-						return TwoPairs;
-					}
-					else
-					{
-						// Hero Has Trips
-
-						return Trips;
-					}
-				}
-			}
-
-			uint TotalFourMask = hTotalCardMask & dTotalCardMask & cTotalCardMask & sTotalCardMask;
-
-			if(TotalFourMask != 0)
-			{
-				// Board or Hero Has Four of a Kind
-
-				return Quads;
-			}
-
-			if(Data.BitCountTable[TotalTwoMask] != TotalDuplicateCount)
-			{
-				if(TotalDuplicateCount != 1 && TotalDuplicateCount != 2)
-				{
-					// Board or Hero Has Full House
-
-					return FullHouse;
-				}
-			}
-
-			if(TotalDuplicateCount == 3 && BoardDuplicateCount == 2)
-			{
-				uint BoardTwoMask = BoardDenominationMask ^ cBoardCardMask ^ dBoardCardMask ^ hBoardCardMask ^ sBoardCardMask;
-
-				uint BoardFirstCardValue = Data.FirstCardValueTable[BoardTwoMask];
-
-				uint TotalFirstCardValue = Data.FirstCardValueTable[TotalTwoMask];
-
-				uint BoardSecondCardValue = Data.FirstCardValueTable[BoardTwoMask ^ 1 << (int) BoardFirstCardValue];
-
-				uint TotalSecondCardValue = Data.FirstCardValueTable[TotalTwoMask ^ 1 << (int) TotalFirstCardValue];
-
-				if(TotalSecondCardValue > BoardSecondCardValue)
-				{
-					// Hero Has Two Pairs
-
-					return TwoPairs;
-				}
-			}
-
-			return Nothing;
-		}
-
 		private static int[] GetCards()
 		{
 			bool[] positions = new bool[52];
@@ -690,13 +78,16 @@ namespace Combinations
 
 				ulong hand2 = Data.DefaultCardMask[cards[7]] | Data.DefaultCardMask[cards[8]];
 
-				int flop1 = GetCombinationSilent(board3, hand1);
-				int turn1 = GetCombinationSilent(board4, hand1);
-				int river1 = GetCombinationSilent(board5, hand1);
+				int flop1 = Data.GetCombination(board3, hand1);
+				int turn1 = Data.GetCombination(board4, hand1);
+				int river1 = Data.GetCombination(board5, hand1);
 
-				int flop2 = GetCombinationSilent(board3, hand2);
-				int turn2 = GetCombinationSilent(board4, hand2);
-				int river2 = GetCombinationSilent(board5, hand2);
+				int flop2 = Data.GetCombination(board3, hand2);
+				int turn2 = Data.GetCombination(board4, hand2);
+				int river2 = Data.GetCombination(board5, hand2);
+
+				uint rang1 = Data.GetTexasHoldemCombinationRank(board5 | hand1);
+				uint rang2 = Data.GetTexasHoldemCombinationRank(board5 | hand2);
 
 				if((board5 & hand1) != 0)
 				{
@@ -712,9 +103,112 @@ namespace Combinations
 			int b = 0;
 		}
 
+		private static void Test()
+		{
+			for(int i=0; i<10000000; ++i)
+			{
+				int[] cards = GetCards();
+
+				ulong board3 = Data.DefaultCardMask[cards[0]] | Data.DefaultCardMask[cards[1]] | Data.DefaultCardMask[cards[2]];
+
+				ulong board4 = board3 | Data.DefaultCardMask[cards[3]];
+
+				ulong board5 = board4 | Data.DefaultCardMask[cards[4]];
+
+				ulong hand1 = Data.DefaultCardMask[cards[5]] | Data.DefaultCardMask[cards[6]];
+
+				ulong hand2 = Data.DefaultCardMask[cards[7]] | Data.DefaultCardMask[cards[8]];
+
+				int flop1 = Data.GetCombination(board3, hand1);
+				int turn1 = Data.GetCombination(board4, hand1);
+				int river1 = Data.GetCombination(board5, hand1);
+
+				int flop2 = Data.GetCombination(board3, hand2);
+				int turn2 = Data.GetCombination(board4, hand2);
+				int river2 = Data.GetCombination(board5, hand2);
+
+				uint rang1 = Data.GetTexasHoldemCombinationRank(board5 | hand1);
+				uint rang2 = Data.GetTexasHoldemCombinationRank(board5 | hand2);
+
+				if((board5 & hand1) != 0)
+				{
+					throw new Exception();
+				}
+
+				if((board5 & hand2) != 0)
+				{
+					throw new Exception();
+				}
+				
+				bool show = false;
+				
+				//show = show || (rang1 > rang2 && river1 < river2);
+				//
+				//show = show || (rang2 > rang1 && river2 < river1);
+				//
+				//show = show || (rang2 == rang1 && river2 != river1);
+
+				show = show || (flop1 == TwoPairs || turn1 == TwoPairs ||  river1 == TwoPairs);
+
+				show = show || (flop2 == TwoPairs || turn2 == TwoPairs ||  river2 == TwoPairs);
+
+				if(show)
+				{
+					Card BoardCard1 = Card.DefaultCards[cards[0]];
+					Card BoardCard2 = Card.DefaultCards[cards[1]];
+					Card BoardCard3 = Card.DefaultCards[cards[2]];
+					Card BoardCard4 = Card.DefaultCards[cards[3]];
+					Card BoardCard5 = Card.DefaultCards[cards[4]];
+
+					Card Player1Card1 = Card.DefaultCards[cards[5]];
+					Card Player1Card2 = Card.DefaultCards[cards[6]];
+
+					Card Player2Card1 = Card.DefaultCards[cards[7]];
+					Card Player2Card2 = Card.DefaultCards[cards[8]];
+
+					Console.Clear();
+
+					Console.Write("Flop: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + "\n\n");
+
+					Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(flop1) + ")\n\n");
+
+					Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(flop2) + ")\n\n");
+
+					Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + "\n\n");
+
+					Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(turn1) + ")\n\n");
+
+					Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(turn2) + ")\n\n");
+
+					Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + "\n\n");
+
+					Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(river1) + ")\n\n");
+
+					Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(river2) + ")\n\n");
+
+					if(rang1 > rang2)
+					{
+						Console.Write("Player1 Wins\n\n");
+					}
+
+					if(rang1 == rang2)
+					{
+						Console.Write("Tie\n\n");
+					}
+
+					if(rang2 > rang1)
+					{
+						Console.Write("Player2 Wins\n\n");
+					}
+
+					Console.ReadKey();
+				}
+			}
+		}
+
 		private static void Main()
 		{
-			GetCardsTest();
+			Test();
 		}
 	}
 }
