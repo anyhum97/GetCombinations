@@ -31,6 +31,16 @@ namespace Combinations
 		public Card(int index)
 		{
 			Set(Data.DefaultCardDenomination[index], Data.DefaultCardSuit[index]);
+
+			//CardIndex = index;
+			//
+			//Mask = 1UL << index;
+			//
+			//Title = Data.DefaultCardTitle[CardIndex];
+			//
+			//Denomination = index % 13;
+			//
+			//Suit = index / 13;
 		}
 
 		public Card(int denomination, int suit)

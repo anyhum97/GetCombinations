@@ -303,7 +303,7 @@ namespace Combinations
 			0xc, 0xc
 		};
 
-		public static readonly uint[] FirstFiveCardsValueTable =
+		public static readonly uint[] FlushValueTable =
 		{
 			0x0, 0x0, 0x10000, 0x10000, 0x20000, 0x20000, 0x21000, 0x21000, 0x30000, 0x30000, 0x31000, 0x31000, 0x32000, 0x32000, 0x32100, 0x32100, 0x40000, 0x40000, 0x41000, 0x41000, 0x42000, 0x42000, 0x42100, 0x42100, 0x43000,
 			0x43000, 0x43100, 0x43100, 0x43200, 0x43200, 0x43210, 0x43210, 0x50000, 0x50000, 0x51000, 0x51000, 0x52000, 0x52000, 0x52100, 0x52100, 0x53000, 0x53000, 0x53100, 0x53100, 0x53200, 0x53200, 0x53210, 0x53210, 0x54000,
@@ -2598,16 +2598,6 @@ namespace Combinations
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 		};
 
-		public static int GetSuit(int card)
-		{
-			return card / 13;
-		}
-
-		public static int GetDenomination(int card)
-		{
-			return card % 13;
-		}
-
 		public static int GetHandIndex(int card1, int card2)
 		{
 			if(card1 > card2)
@@ -2618,177 +2608,6 @@ namespace Combinations
 			}
 
 			return HandIndexOffset[card1] + card2;
-		}
-
-		public static uint GetTexasHoldemCombinationRank(ulong CardsMask)
-		{
-			uint CombinationRank = 0;
-
-			uint CardCount = BitCountTable[CardsMask & 0x1fff] + BitCountTable[CardsMask >> 13 & 0x1fff] + BitCountTable[CardsMask >> 26 & 0x1fff] + BitCountTable[CardsMask >> 39 & 0x1fff];
-	
-			uint cCardMask = (uint) (CardsMask >> 0 & 0x1fffUL);
-			uint dCardMask = (uint) (CardsMask >> 13 & 0x1fffUL);
-			uint hCardMask = (uint) (CardsMask >> 26 & 0x1fffUL);
-			uint sCardMask = (uint) (CardsMask >> 39 & 0x1fffUL);
-
-			uint DenominationMask = cCardMask | dCardMask | hCardMask | sCardMask;
-
-			uint DenominationCount = BitCountTable[DenominationMask];
-
-			uint DuplicateCount = CardCount - DenominationCount;
-
-			if(DenominationCount >= 5)
-			{
-				if(BitCountTable[sCardMask] >= 5)
-				{
-					if(StraightValueTable[sCardMask] != 0)
-					{
-						return 134217728 + (uint)(StraightValueTable[sCardMask] << 16);
-					}
-		
-					CombinationRank = 83886080 + FirstFiveCardsValueTable[sCardMask];
-				}
-		
-				else if(BitCountTable[cCardMask] >= 5)
-				{
-					if(StraightValueTable[cCardMask] != 0)
-					{
-						return 134217728 + (uint)(StraightValueTable[cCardMask] << 16);
-					}
-		
-					CombinationRank = 83886080 + FirstFiveCardsValueTable[cCardMask];
-				}
-		
-				else if (BitCountTable[dCardMask] >= 5)
-				{
-					if(StraightValueTable[dCardMask] != 0)
-					{
-						return 134217728 + (uint)(StraightValueTable[dCardMask] << 16);
-					}
-		
-					CombinationRank = 83886080 + FirstFiveCardsValueTable[dCardMask];
-				}
-		
-				else if(BitCountTable[hCardMask] >= 5)
-				{
-					if(StraightValueTable[hCardMask] != 0)
-					{
-						return 134217728 + (uint)(StraightValueTable[hCardMask] << 16);
-					}
-		
-					CombinationRank = 83886080 + FirstFiveCardsValueTable[hCardMask];
-				}
-				else
-				{
-					uint straightValue = StraightValueTable[DenominationMask];
-			
-					if(straightValue != 0)
-					{
-						CombinationRank = 67108864 + (straightValue << 16);
-					}
-				}
-		
-				if(CombinationRank != 0 && DuplicateCount < 3)
-				{
-					return CombinationRank;
-				}
-			}
-
-			switch(DuplicateCount)
-			{
-				case 0:
-
-					return FirstFiveCardsValueTable[DenominationMask];
-	
-				case 1:
-				{
-					uint twoMask = DenominationMask ^ cCardMask ^ dCardMask ^ hCardMask ^ sCardMask;
-
-					CombinationRank = (uint)(16777216 + (FirstCardValueTable[twoMask] << 16));
-
-					long kickersValue = FirstFiveCardsValueTable[DenominationMask ^ twoMask] >> 4 & ~0x0000000F;
-
-					CombinationRank += (uint)kickersValue;
-
-					return CombinationRank;
-				}
-
-				case 2:
-				{
-					uint twoMask = DenominationMask ^ cCardMask ^ dCardMask ^ hCardMask ^ sCardMask;
-			
-					if(twoMask != 0)
-					{
-						uint t = DenominationMask ^ twoMask;
-				
-						CombinationRank = (uint) (33554432 + (FirstFiveCardsValueTable[twoMask] & (0x000F0000 | 0x0000F000)) + (FirstCardValueTable[t] << 8));
-				
-						return CombinationRank;
-					}
-					else
-					{
-						uint threeMask = (cCardMask & dCardMask | hCardMask & sCardMask) & (cCardMask & hCardMask | dCardMask & sCardMask);
-			    
-						CombinationRank = (uint) (50331648 + (FirstCardValueTable[threeMask] << 16));
-			    
-						uint t = DenominationMask ^ threeMask;
-						uint secondCardValue = FirstCardValueTable[t];
-			    
-						CombinationRank += secondCardValue << 12;
-						t ^= 1U << (int) secondCardValue;
-						CombinationRank += (uint) (FirstCardValueTable[t] << 8);
-			    
-						return CombinationRank;
-					}
-				}
-
-				default:
-				{
-					uint fourMask = hCardMask & dCardMask & cCardMask & sCardMask;
-
-					if(fourMask != 0)
-					{
-						uint FirstCardValue = FirstCardValueTable[fourMask];
-
-						CombinationRank = (uint) (117440512 + (FirstCardValue << 16) + (FirstCardValueTable[DenominationMask ^ 1U << (int) FirstCardValue] << 12));
-	            
-						return CombinationRank;
-					}
-
-					uint twoMask = DenominationMask ^ cCardMask ^ dCardMask ^ hCardMask ^ sCardMask;
-
-					if(BitCountTable[twoMask] != DuplicateCount)
-					{	
-						uint threeMask = (cCardMask & dCardMask | hCardMask & sCardMask) & (cCardMask & hCardMask | dCardMask & sCardMask);
-						CombinationRank = 100663296;
-				
-						uint FirstCardValue = FirstCardValueTable[threeMask];
-						CombinationRank += FirstCardValue << 16;
-				
-						uint t = (twoMask | threeMask) ^ 1U << (int) FirstCardValue;
-						CombinationRank += (uint) (FirstCardValueTable[t] << 12);
-				
-						return CombinationRank;
-					}
-
-					if(CombinationRank != 0)
-					{
-						return CombinationRank;
-					}
-			
-					CombinationRank = 33554432;
-					uint firstCardValue = FirstCardValueTable[twoMask];
-			
-					CombinationRank += firstCardValue << 16;
-			
-					uint secondCardValue = FirstCardValueTable[twoMask ^ 1 << (int) firstCardValue];
-			
-					CombinationRank += secondCardValue << 12;
-					CombinationRank += (uint) (FirstCardValueTable[DenominationMask ^ 1U << (int) firstCardValue ^ 1 << (int) secondCardValue] << 8);
-					
-					return CombinationRank;
-				}
-			}
 		}
 	}
 }
