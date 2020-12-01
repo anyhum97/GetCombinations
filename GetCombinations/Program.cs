@@ -140,9 +140,13 @@ namespace Combinations
 					throw new Exception();
 				}
 
-				bool show = true;
+				bool show = false;
 
-				bool levels = false;
+				//show = show || (Player1Street3 == HighCard || Player2Street3 == HighCard);
+
+				show = show || (Player1Street3 == Trips || Player2Street3 == Trips);
+
+				bool levels = true;
 
 				bool win1 = rang1 > rang2;
 				bool win2 = rang2 > rang1;

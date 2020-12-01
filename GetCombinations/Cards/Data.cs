@@ -3144,9 +3144,16 @@ namespace Combinations
 					}
 					else
 					{
-						// Hero Has Trips
+						// Hero Has Set or Trips
 
-						return Trips;
+						if(BoardDuplicateCount == 0)
+						{
+							return Set;
+						}
+						else
+						{
+							return Trips;
+						}
 					}
 				}
 			}
