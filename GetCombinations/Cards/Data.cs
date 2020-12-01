@@ -836,6 +836,11 @@ namespace Combinations
 			0xc, 0xc
 		};
 
+		public static readonly uint[] StraightLevelTable = new uint[32]
+		{
+			0U, 1U, 1U, 2U, 1U, 2U, 2U, 3U, 1U, 2U, 2U, 3U, 2U, 3U, 3U, 4U, 1U, 2U, 2U, 3U, 2U, 3U, 3U, 4U, 2U, 3U, 3U, 4U, 3U, 4U, 4U, 5U, 
+		};
+
 		public static readonly ulong[] DefaultCardMask = new ulong[52]
 		{
 			1UL, 2UL, 4UL, 8UL, 16UL, 32UL, 64UL, 128UL, 256UL, 512UL, 1024UL, 2048UL, 4096UL, 8192UL, 16384UL, 32768UL, 65536UL, 131072UL, 262144UL, 524288UL, 1048576UL, 2097152UL, 4194304UL, 8388608UL, 16777216UL, 33554432UL, 67108864UL, 134217728UL, 268435456UL, 536870912UL, 1073741824UL, 2147483648UL, 4294967296UL, 8589934592UL, 17179869184UL, 34359738368UL, 68719476736UL, 137438953472UL, 274877906944UL, 549755813888UL, 1099511627776UL, 2199023255552UL, 4398046511104UL, 8796093022208UL, 17592186044416UL, 35184372088832UL, 70368744177664UL, 140737488355328UL, 281474976710656UL, 562949953421312UL, 1125899906842624UL, 2251799813685248UL
@@ -2598,15 +2603,15 @@ namespace Combinations
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 		};
 
-		public const int Nothing = 0;
-		public const int OnePair = 1;
-		public const int TwoPairs = 2;
-		public const int Trips = 3;
-		public const int Straight = 4;
-		public const int Flush = 5;
-		public const int FullHouse = 6;
-		public const int Quads = 7;
-		public const int StraightFlush = 8;
+		public const uint Nothing = 0;
+		public const uint OnePair = 1;
+		public const uint TwoPairs = 2;
+		public const uint Trips = 3;
+		public const uint Straight = 4;
+		public const uint Flush = 5;
+		public const uint FullHouse = 6;
+		public const uint Quads = 7;
+		public const uint StraightFlush = 8;
 
 		public static uint GetTexasHoldemCombinationRank(ulong CardsMask)
 		{
@@ -2790,7 +2795,7 @@ namespace Combinations
 			}
 		}
 
-		public static int GetCombination(ulong board, ulong hand)
+		public static uint GetCombination(ulong board, ulong hand)
 		{
 			ulong total = board | hand;
 
@@ -3137,6 +3142,58 @@ namespace Combinations
 			}
 
 			return Nothing;
+		}
+
+		public static uint GetBoardFlushLevel(ulong board)
+		{
+			uint cBoardCardMask = (uint)((board >> 00) & 0x1fffUL);
+			uint dBoardCardMask = (uint)((board >> 13) & 0x1fffUL);
+			uint hBoardCardMask = (uint)((board >> 26) & 0x1fffUL);
+			uint sBoardCardMask = (uint)((board >> 39) & 0x1fffUL);
+
+			uint cBoardFlushCards = BitCountTable[cBoardCardMask];
+			uint dBoardFlushCards = BitCountTable[dBoardCardMask];
+			uint hBoardFlushCards = BitCountTable[hBoardCardMask];
+			uint sBoardFlushCards = BitCountTable[sBoardCardMask];
+
+			uint FlushLevel = Math.Max(Math.Max(cBoardFlushCards, dBoardFlushCards), Math.Max(hBoardFlushCards, sBoardFlushCards));
+
+			return FlushLevel;
+		}
+
+		public static uint GetBoardStraightLevel(ulong board)
+		{
+			uint cBoardCardMask = (uint)((board >> 00) & 0x1fffUL);
+			uint dBoardCardMask = (uint)((board >> 13) & 0x1fffUL);
+			uint hBoardCardMask = (uint)((board >> 26) & 0x1fffUL);
+			uint sBoardCardMask = (uint)((board >> 39) & 0x1fffUL);
+
+			// Shift a Mask to the Left to Free up Space for Ace on the First Bit
+
+			uint BoardDenominationMask = (cBoardCardMask | dBoardCardMask | hBoardCardMask | sBoardCardMask) << 1;
+
+			if((BoardDenominationMask & 8192) != 0)
+			{
+				// Board Has Ace
+
+				BoardDenominationMask |= 1;
+			}
+
+			uint BoardStraightLevel = 1;
+
+			for(int i=0; i<10; ++i)
+			{
+				uint StraightMask = (BoardDenominationMask >> i) & 31;
+
+				uint StraightLevel = StraightLevelTable[StraightMask];
+
+				if(StraightLevel > BoardStraightLevel)
+				{
+					BoardStraightLevel = StraightLevel;
+				}
+			}
+
+			return BoardStraightLevel;
 		}
 
 		public static int GetHandIndex(int card1, int card2)

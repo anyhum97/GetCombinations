@@ -7,19 +7,19 @@ namespace Combinations
 {
 	partial class Program
 	{
-		public const int Nothing = 0;
-		public const int OnePair = 1;
-		public const int TwoPairs = 2;
-		public const int Trips = 3;
-		public const int Straight = 4;
-		public const int Flush = 5;
-		public const int FullHouse = 6;
-		public const int Quads = 7;
-		public const int StraightFlush = 8;
+		public const uint Nothing = 0;
+		public const uint OnePair = 1;
+		public const uint TwoPairs = 2;
+		public const uint Trips = 3;
+		public const uint Straight = 4;
+		public const uint Flush = 5;
+		public const uint FullHouse = 6;
+		public const uint Quads = 7;
+		public const uint StraightFlush = 8;
 
 		private static Random StaticRandom = new Random();
 
-		public static string GetCombinationTitle(int combination)
+		public static string GetCombinationTitle(uint combination)
 		{
 			switch(combination)
 			{
@@ -78,13 +78,13 @@ namespace Combinations
 
 				ulong hand2 = Data.DefaultCardMask[cards[7]] | Data.DefaultCardMask[cards[8]];
 
-				int flop1 = Data.GetCombination(board3, hand1);
-				int turn1 = Data.GetCombination(board4, hand1);
-				int river1 = Data.GetCombination(board5, hand1);
+				uint flop1 = Data.GetCombination(board3, hand1);
+				uint turn1 = Data.GetCombination(board4, hand1);
+				uint river1 = Data.GetCombination(board5, hand1);
 
-				int flop2 = Data.GetCombination(board3, hand2);
-				int turn2 = Data.GetCombination(board4, hand2);
-				int river2 = Data.GetCombination(board5, hand2);
+				uint flop2 = Data.GetCombination(board3, hand2);
+				uint turn2 = Data.GetCombination(board4, hand2);
+				uint river2 = Data.GetCombination(board5, hand2);
 
 				uint rang1 = Data.GetTexasHoldemCombinationRank(board5 | hand1);
 				uint rang2 = Data.GetTexasHoldemCombinationRank(board5 | hand2);
@@ -119,13 +119,13 @@ namespace Combinations
 
 				ulong hand2 = Data.DefaultCardMask[cards[7]] | Data.DefaultCardMask[cards[8]];
 
-				int flop1 = Data.GetCombination(board3, hand1);
-				int turn1 = Data.GetCombination(board4, hand1);
-				int river1 = Data.GetCombination(board5, hand1);
+				uint flop1 = Data.GetCombination(board3, hand1);
+				uint turn1 = Data.GetCombination(board4, hand1);
+				uint river1 = Data.GetCombination(board5, hand1);
 
-				int flop2 = Data.GetCombination(board3, hand2);
-				int turn2 = Data.GetCombination(board4, hand2);
-				int river2 = Data.GetCombination(board5, hand2);
+				uint flop2 = Data.GetCombination(board3, hand2);
+				uint turn2 = Data.GetCombination(board4, hand2);
+				uint river2 = Data.GetCombination(board5, hand2);
 
 				uint rang1 = Data.GetTexasHoldemCombinationRank(board5 | hand1);
 				uint rang2 = Data.GetTexasHoldemCombinationRank(board5 | hand2);
@@ -142,15 +142,29 @@ namespace Combinations
 				
 				bool show = false;
 				
+				bool win1 = rang1 > rang2;
+				bool win2 = rang2 > rang1;
+				bool tie = rang1 == rang2;
+
+				//show = show || (flop1 == Nothing || flop2 == Nothing || turn1 == Nothing || turn2 == Nothing);
+
+				//show = show || ((river1 == Nothing && (flop1 > OnePair)) || (river2 == Nothing && (flop2 > OnePair)));
+
+				//show = show || (river1 > OnePair || river2 > OnePair);
+
 				//show = show || (rang1 > rang2 && river1 < river2);
 				//
 				//show = show || (rang2 > rang1 && river2 < river1);
 				//
 				//show = show || (rang2 == rang1 && river2 != river1);
 
-				show = show || (flop1 == TwoPairs || turn1 == TwoPairs ||  river1 == TwoPairs);
+				//show = show || (flop1 == TwoPairs || turn1 == TwoPairs ||  river1 == TwoPairs);
+				//
+				//show = show || (flop2 == TwoPairs || turn2 == TwoPairs ||  river2 == TwoPairs);
 
-				show = show || (flop2 == TwoPairs || turn2 == TwoPairs ||  river2 == TwoPairs);
+				show = show || ((turn1 == Quads) && (turn2 == Quads));
+				
+				//show = show || (turn2 == Quads);
 
 				if(show)
 				{
