@@ -2603,15 +2603,18 @@ namespace Combinations
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 		};
 
-		public const uint Nothing = 0;
-		public const uint OnePair = 1;
-		public const uint TwoPairs = 2;
-		public const uint Trips = 3;
-		public const uint Straight = 4;
-		public const uint Flush = 5;
-		public const uint FullHouse = 6;
-		public const uint Quads = 7;
-		public const uint StraightFlush = 8;
+		public const int Nothing = 0;
+		public const int HighCard = 1;
+		public const int WeakPair = 2;
+		public const int MiddlePair = 3;
+		public const int HighPair = 4;
+		public const int TwoPairs = 5;
+		public const int Trips = 6;
+		public const int Set = 7;
+		public const int Straight = 8;
+		public const int Flush = 9;
+		public const int FullHouse = 10;
+		public const int Nuts = 11;
 
 		public static uint GetTexasHoldemCombinationRank(ulong CardsMask)
 		{
@@ -2794,20 +2797,67 @@ namespace Combinations
 				}
 			}
 		}
-
-		public static uint GetCombination(ulong board, ulong hand)
+		
+		public static uint GetPairRang(uint BoardDenominationMask, ulong Hand)
 		{
-			ulong total = board | hand;
+			uint cHandCardMask = (uint)((Hand >> 00) & 0x1fffUL);
+			uint dHandCardMask = (uint)((Hand >> 13) & 0x1fffUL);
+			uint hHandCardMask = (uint)((Hand >> 26) & 0x1fffUL);
+			uint sHandCardMask = (uint)((Hand >> 39) & 0x1fffUL);
 
-			uint cBoardCardMask = (uint)((board >> 00) & 0x1fffUL);
-			uint dBoardCardMask = (uint)((board >> 13) & 0x1fffUL);
-			uint hBoardCardMask = (uint)((board >> 26) & 0x1fffUL);
-			uint sBoardCardMask = (uint)((board >> 39) & 0x1fffUL);
+			uint HandDenominationMask = cHandCardMask | dHandCardMask | hHandCardMask | sHandCardMask;
+
+			uint PairDenomination = BoardDenominationMask & HandDenominationMask;
+
+			if(PairDenomination < 64)
+			{
+				// 2-7
+
+				return WeakPair;
+			}
+
+			if(PairDenomination < 1024)
+			{
+				// 8-J
+
+				return MiddlePair;
+			}
+
+			// Q-A
+
+			return HighPair;
+		}
+
+		public static uint GetHighCardRang(ulong Hand)
+		{
+			uint cHandCardMask = (uint)((Hand >> 00) & 0x1fffUL);
+			uint dHandCardMask = (uint)((Hand >> 13) & 0x1fffUL);
+			uint hHandCardMask = (uint)((Hand >> 26) & 0x1fffUL);
+			uint sHandCardMask = (uint)((Hand >> 39) & 0x1fffUL);
+
+			uint HandDenominationMask = cHandCardMask | dHandCardMask | hHandCardMask | sHandCardMask;
+
+			if((HandDenominationMask & 4096) != 0)
+			{
+				return HighCard;
+			}
+
+			return Nothing;
+		}
+
+		public static uint GetCombination(ulong Board, ulong Hand)
+		{
+			ulong Total = Board | Hand;
+
+			uint cBoardCardMask = (uint)((Board >> 00) & 0x1fffUL);
+			uint dBoardCardMask = (uint)((Board >> 13) & 0x1fffUL);
+			uint hBoardCardMask = (uint)((Board >> 26) & 0x1fffUL);
+			uint sBoardCardMask = (uint)((Board >> 39) & 0x1fffUL);
 			
-			uint cTotalCardMask = (uint)((total >> 00) & 0x1fffUL);
-			uint dTotalCardMask = (uint)((total >> 13) & 0x1fffUL);
-			uint hTotalCardMask = (uint)((total >> 26) & 0x1fffUL);
-			uint sTotalCardMask = (uint)((total >> 39) & 0x1fffUL);
+			uint cTotalCardMask = (uint)((Total >> 00) & 0x1fffUL);
+			uint dTotalCardMask = (uint)((Total >> 13) & 0x1fffUL);
+			uint hTotalCardMask = (uint)((Total >> 26) & 0x1fffUL);
+			uint sTotalCardMask = (uint)((Total >> 39) & 0x1fffUL);
 
 			uint cBoardFlushCards = BitCountTable[cBoardCardMask];
 			uint dBoardFlushCards = BitCountTable[dBoardCardMask];
@@ -2821,23 +2871,23 @@ namespace Combinations
 
 			uint BoardCardCount = 0;
 			
-			BoardCardCount += BitCountTable[(board >> 00) & 0x1fff];
+			BoardCardCount += BitCountTable[(Board >> 00) & 0x1fff];
 			
-			BoardCardCount += BitCountTable[(board >> 13) & 0x1fff];
+			BoardCardCount += BitCountTable[(Board >> 13) & 0x1fff];
 			
-			BoardCardCount += BitCountTable[(board >> 26) & 0x1fff];
+			BoardCardCount += BitCountTable[(Board >> 26) & 0x1fff];
 			
-			BoardCardCount += BitCountTable[(board >> 39) & 0x1fff];
+			BoardCardCount += BitCountTable[(Board >> 39) & 0x1fff];
 
 			uint TotalCardCount = 0;
 			
-			TotalCardCount += BitCountTable[(total >> 00) & 0x1fff];
+			TotalCardCount += BitCountTable[(Total >> 00) & 0x1fff];
 			
-			TotalCardCount += BitCountTable[(total >> 13) & 0x1fff];
+			TotalCardCount += BitCountTable[(Total >> 13) & 0x1fff];
 			
-			TotalCardCount += BitCountTable[(total >> 26) & 0x1fff];
+			TotalCardCount += BitCountTable[(Total >> 26) & 0x1fff];
 			
-			TotalCardCount += BitCountTable[(total >> 39) & 0x1fff];
+			TotalCardCount += BitCountTable[(Total >> 39) & 0x1fff];
 
 			uint BoardDenominationMask = cBoardCardMask | dBoardCardMask | hBoardCardMask | sBoardCardMask;
 
@@ -2867,7 +2917,7 @@ namespace Combinations
 					{
 						// Hero Has Straight Flush (c)
 
-						return StraightFlush;
+						return Nuts;
 					}
 
 					if(cBoardStraightValue > 0)
@@ -2910,7 +2960,7 @@ namespace Combinations
 					{
 						// Hero Has Straight Flush (d)
 
-						return StraightFlush;
+						return Nuts;
 					}
 
 					if(dBoardStraightValue > 0)
@@ -2953,7 +3003,7 @@ namespace Combinations
 					{
 						// Hero Has Straight Flush (h)
 
-						return StraightFlush;
+						return Nuts;
 					}
 
 					if(hBoardStraightValue > 0)
@@ -2996,7 +3046,7 @@ namespace Combinations
 					{
 						// Hero Has Straight Flush (s)
 
-						return StraightFlush;
+						return Nuts;
 					}
 
 					if(sBoardStraightValue > 0)
@@ -3051,7 +3101,9 @@ namespace Combinations
 
 			if(TotalDuplicateCount == 0)
 			{
-				return Nothing;
+				// Nothing or High Card
+
+				return GetHighCardRang(Hand);
 			}
 
 			if(BoardHasFlush || BoardHasStraight)
@@ -3068,7 +3120,9 @@ namespace Combinations
 			{
 				if(TotalDuplicateCount == 1)
 				{
-					return OnePair;
+					// Hero Has One Pair
+
+					return GetPairRang(BoardDenominationMask, Hand);
 				}
 
 				if(TotalDuplicateCount == 2)
@@ -3085,7 +3139,7 @@ namespace Combinations
 						{
 							// Hero Has One Pair
 
-							return OnePair;
+							return GetPairRang(BoardDenominationMask, Hand);
 						}
 					}
 					else
@@ -3103,7 +3157,7 @@ namespace Combinations
 			{
 				// Board or Hero Has Four of a Kind
 
-				return Quads;
+				return Nuts;
 			}
 
 			if(BitCountTable[TotalTwoMask] != TotalDuplicateCount)
@@ -3136,12 +3190,14 @@ namespace Combinations
 					}
 					else
 					{
-						return OnePair;
+						// Hero Has One Pair
+
+						return GetPairRang(BoardDenominationMask, Hand);
 					}
 				}
 			}
 
-			return Nothing;
+			return GetHighCardRang(Hand);
 		}
 
 		public static uint GetBoardFlushLevel(ulong board)

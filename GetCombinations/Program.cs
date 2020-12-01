@@ -9,16 +9,6 @@ namespace Combinations
 {
 	partial class Program
 	{
-		public const uint Nothing = 0;
-		public const uint OnePair = 1;
-		public const uint TwoPairs = 2;
-		public const uint Trips = 3;
-		public const uint Straight = 4;
-		public const uint Flush = 5;
-		public const uint FullHouse = 6;
-		public const uint Quads = 7;
-		public const uint StraightFlush = 8;
-
 		private static Random StaticRandom = new Random();
 
 		public static string GetCombinationTitle(uint combination)
@@ -26,14 +16,17 @@ namespace Combinations
 			switch(combination)
 			{
 				case Nothing: return "Nothing";
-				case OnePair: return "One Pair";
+				case HighCard: return "A High";
+				case WeakPair: return "Weak Pair";
+				case MiddlePair: return "Middle Pair";
+				case HighPair: return "High Pair";
 				case TwoPairs: return "Two Pairs";
 				case Trips: return "Trips";
+				case Set: return "Set";
 				case Straight: return "Straight";
 				case Flush: return "Flush";
 				case FullHouse: return "Full House";
-				case Quads: return "Quads";
-				case StraightFlush: return "Straight Flush";
+				case Nuts: return "Nuts";
 			}
 
 			return "Invalid Combination";
@@ -149,7 +142,7 @@ namespace Combinations
 
 				bool show = true;
 
-				bool levels = true;
+				bool levels = false;
 
 				bool win1 = rang1 > rang2;
 				bool win2 = rang2 > rang1;
