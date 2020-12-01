@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
+using static Combinations.Data;
+
 namespace Combinations
 {
 	partial class Program
@@ -68,26 +70,26 @@ namespace Combinations
 			{
 				int[] cards = GetCards();
 
-				ulong board3 = Data.DefaultCardMask[cards[0]] | Data.DefaultCardMask[cards[1]] | Data.DefaultCardMask[cards[2]];
+				ulong board3 = DefaultCardMask[cards[0]] | DefaultCardMask[cards[1]] | DefaultCardMask[cards[2]];
 
-				ulong board4 = board3 | Data.DefaultCardMask[cards[3]];
+				ulong board4 = board3 | DefaultCardMask[cards[3]];
 
-				ulong board5 = board4 | Data.DefaultCardMask[cards[4]];
+				ulong board5 = board4 | DefaultCardMask[cards[4]];
 
-				ulong hand1 = Data.DefaultCardMask[cards[5]] | Data.DefaultCardMask[cards[6]];
+				ulong hand1 = DefaultCardMask[cards[5]] | DefaultCardMask[cards[6]];
 
-				ulong hand2 = Data.DefaultCardMask[cards[7]] | Data.DefaultCardMask[cards[8]];
+				ulong hand2 = DefaultCardMask[cards[7]] | DefaultCardMask[cards[8]];
 
-				uint flop1 = Data.GetCombination(board3, hand1);
-				uint turn1 = Data.GetCombination(board4, hand1);
-				uint river1 = Data.GetCombination(board5, hand1);
+				uint flop1 = GetCombination(board3, hand1);
+				uint turn1 = GetCombination(board4, hand1);
+				uint river1 = GetCombination(board5, hand1);
 
-				uint flop2 = Data.GetCombination(board3, hand2);
-				uint turn2 = Data.GetCombination(board4, hand2);
-				uint river2 = Data.GetCombination(board5, hand2);
+				uint flop2 = GetCombination(board3, hand2);
+				uint turn2 = GetCombination(board4, hand2);
+				uint river2 = GetCombination(board5, hand2);
 
-				uint rang1 = Data.GetTexasHoldemCombinationRank(board5 | hand1);
-				uint rang2 = Data.GetTexasHoldemCombinationRank(board5 | hand2);
+				uint rang1 = GetTexasHoldemCombinationRank(board5 | hand1);
+				uint rang2 = GetTexasHoldemCombinationRank(board5 | hand2);
 
 				if((board5 & hand1) != 0)
 				{
@@ -109,26 +111,26 @@ namespace Combinations
 			{
 				int[] cards = GetCards();
 
-				ulong board3 = Data.DefaultCardMask[cards[0]] | Data.DefaultCardMask[cards[1]] | Data.DefaultCardMask[cards[2]];
+				ulong board3 = DefaultCardMask[cards[0]] | DefaultCardMask[cards[1]] | DefaultCardMask[cards[2]];
 
-				ulong board4 = board3 | Data.DefaultCardMask[cards[3]];
+				ulong board4 = board3 | DefaultCardMask[cards[3]];
 
-				ulong board5 = board4 | Data.DefaultCardMask[cards[4]];
+				ulong board5 = board4 | DefaultCardMask[cards[4]];
 
-				ulong hand1 = Data.DefaultCardMask[cards[5]] | Data.DefaultCardMask[cards[6]];
+				ulong hand1 = DefaultCardMask[cards[5]] | DefaultCardMask[cards[6]];
 
-				ulong hand2 = Data.DefaultCardMask[cards[7]] | Data.DefaultCardMask[cards[8]];
+				ulong hand2 = DefaultCardMask[cards[7]] | DefaultCardMask[cards[8]];
 
-				uint flop1 = Data.GetCombination(board3, hand1);
-				uint turn1 = Data.GetCombination(board4, hand1);
-				uint river1 = Data.GetCombination(board5, hand1);
+				uint Player1Street1 = GetCombination(board3, hand1);
+				uint Player1Street2 = GetCombination(board4, hand1);
+				uint Player1Street3 = GetCombination(board5, hand1);
 
-				uint flop2 = Data.GetCombination(board3, hand2);
-				uint turn2 = Data.GetCombination(board4, hand2);
-				uint river2 = Data.GetCombination(board5, hand2);
+				uint Player2Street1 = GetCombination(board3, hand2);
+				uint Player2Street2 = GetCombination(board4, hand2);
+				uint Player2Street3 = GetCombination(board5, hand2);
 
-				uint rang1 = Data.GetTexasHoldemCombinationRank(board5 | hand1);
-				uint rang2 = Data.GetTexasHoldemCombinationRank(board5 | hand2);
+				uint rang1 = GetTexasHoldemCombinationRank(board5 | hand1);
+				uint rang2 = GetTexasHoldemCombinationRank(board5 | hand2);
 
 				if((board5 & hand1) != 0)
 				{
@@ -140,31 +142,18 @@ namespace Combinations
 					throw new Exception();
 				}
 				
-				bool show = false;
-				
+				if((hand1 & hand2) != 0)
+				{
+					throw new Exception();
+				}
+
+				bool show = true;
+
+				bool levels = true;
+
 				bool win1 = rang1 > rang2;
 				bool win2 = rang2 > rang1;
 				bool tie = rang1 == rang2;
-
-				//show = show || (flop1 == Nothing || flop2 == Nothing || turn1 == Nothing || turn2 == Nothing);
-
-				//show = show || ((river1 == Nothing && (flop1 > OnePair)) || (river2 == Nothing && (flop2 > OnePair)));
-
-				//show = show || (river1 > OnePair || river2 > OnePair);
-
-				//show = show || (rang1 > rang2 && river1 < river2);
-				//
-				//show = show || (rang2 > rang1 && river2 < river1);
-				//
-				//show = show || (rang2 == rang1 && river2 != river1);
-
-				//show = show || (flop1 == TwoPairs || turn1 == TwoPairs ||  river1 == TwoPairs);
-				//
-				//show = show || (flop2 == TwoPairs || turn2 == TwoPairs ||  river2 == TwoPairs);
-
-				show = show || ((turn1 == Quads) && (turn2 == Quads));
-				
-				//show = show || (turn2 == Quads);
 
 				if(show)
 				{
@@ -180,25 +169,63 @@ namespace Combinations
 					Card Player2Card1 = Card.DefaultCards[cards[7]];
 					Card Player2Card2 = Card.DefaultCards[cards[8]];
 
-					Console.Clear();
+					if(levels)
+					{
+						Console.Clear();
 
-					Console.Write("Flop: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + "\n\n");
+						Console.Write("Flop: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + "\n\n");
 
-					Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(flop1) + ")\n\n");
+						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street1) + ")\n\n");
 
-					Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(flop2) + ")\n\n");
+						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street1) + ")\n\n");
 
-					Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + "\n\n");
+						Console.Write("FlushLevel: " + GetBoardFlushLevel(board3) + "\n\n");
 
-					Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(turn1) + ")\n\n");
+						Console.Write("StraightLevel: " + GetBoardStraightLevel(board3) + "\n\n");
 
-					Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(turn2) + ")\n\n");
+						Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + "\n\n");
 
-					Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + "\n\n");
+						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street2) + ")\n\n");
 
-					Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(river1) + ")\n\n");
+						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street2) + ")\n\n");
 
-					Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(river2) + ")\n\n");
+						Console.Write("FlushLevel: " + GetBoardFlushLevel(board4) + "\n\n");
+
+						Console.Write("StraightLevel: " + GetBoardStraightLevel(board4) + "\n\n");
+
+						Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + "\n\n");
+
+						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street3) + ")\n\n");
+
+						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street3) + ")\n\n");
+
+						Console.Write("FlushLevel: " + GetBoardFlushLevel(board5) + "\n\n");
+
+						Console.Write("StraightLevel: " + GetBoardStraightLevel(board5) + "\n\n");
+					}
+					else
+					{
+
+						Console.Clear();
+
+						Console.Write("Flop: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + "\n\n");
+
+						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street1) + ")\n\n");
+
+						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street1) + ")\n\n");
+
+						Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + "\n\n");
+
+						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street2) + ")\n\n");
+
+						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street2) + ")\n\n");
+
+						Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + "\n\n");
+
+						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street3) + ")\n\n");
+
+						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street3) + ")\n\n");
+					}
 
 					if(rang1 > rang2)
 					{
@@ -222,6 +249,10 @@ namespace Combinations
 
 		private static void Main()
 		{
+			//Console.WriteLine(GetCombinationTitle(GetCombination(new Board("9dTcJhQdKd").Mask, new Hand("Ad5s").Mask)));
+			
+			//Console.ReadKey();
+
 			Test();
 		}
 	}
