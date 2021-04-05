@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 
 namespace Combinations
 {
@@ -28,6 +26,18 @@ namespace Combinations
 			Invalid();
 		}
 
+		/// <summary>
+		/// Denominations:<br></br>
+		/// 0 => 2<br></br> 1 => 3<br></br> 2 => 4<br></br>
+		/// 3 => 5<br></br> 4 => 6<br></br> 5 => 7<br></br>
+		/// 6 => 8<br></br> 7 => 9<br></br> 8 => T<br></br>
+		/// 9 => J<br></br> 10 => Q<br></br> 11 => K<br></br>
+		/// 12 => A<br></br><br></br>
+		/// Suits:<br></br>
+		/// 0 => c<br></br> 1 => d<br></br> 2 => h<br></br> 3 => s<br></br>
+		/// </summary>
+		/// <param name="denomination"></param>
+		/// <param name="suit"></param>
 		public Card(int denomination, int suit)
 		{
 			Set(denomination, suit);
@@ -38,13 +48,35 @@ namespace Combinations
 			Set(str);
 		}
 
-		public void Set(int denomination, int suit)
+		private static void SetDefaultCards()
 		{
-			if(denomination < 0 || denomination > 12 || suit < 0 || suit > 3)
+			DefaultCards = new Card[52];
+
+			int index = default;
+
+			for(int i=0; i<4; ++i)
 			{
-				throw new Exception();
+				for(int j=0; j<13; ++j)
+				{
+					DefaultCards[index] = new Card(j, i);
+
+					++index;
+				}
+			}
+		}
+
+		private void Set(int denomination, int suit)
+		{
+			if(denomination < 0 || denomination > 12)
+			{
+				throw new Exception("Card.Set: Неверный пареметр \"denomination\". Допустимые значения от 0 до 12.");
 			}
 			
+			if(suit < 0 || suit > 3)
+			{
+				throw new Exception("Card.Set: Неверный пареметр \"suit\". Допустимые значения от 0 до 3.");
+			}
+
 			CardIndex = 13 * suit + denomination;
 			
 			Title = Data.DefaultCardTitle[CardIndex];
@@ -56,7 +88,7 @@ namespace Combinations
 			Suit = suit;
 		}
 
-		public void Set(string str)
+		private void Set(string str)
 		{
 			Invalid();
 
@@ -67,8 +99,7 @@ namespace Combinations
 
 			if(str.Length >= 2)
 			{
-				int denomination = 0;
-				int suit = 0;
+				int denomination = default;
 
 				switch(str[0])
 				{
@@ -89,6 +120,8 @@ namespace Combinations
 					default: return;
 				}
 
+				int suit = default;
+
 				switch(str[1])
 				{
 					case 'c': suit = 0; break;
@@ -103,78 +136,7 @@ namespace Combinations
 			}
 		}
 
-		public bool IsValid()
-		{ 
-			if(Mask != ulong.MaxValue)
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		public void Invalid()
-		{
-			Title = "Invalid";
-
-			Denomination = int.MaxValue;
-			Suit = int.MaxValue;
-
-			CardIndex = int.MaxValue;
-			Mask = ulong.MaxValue;
-		}
-
-		public static bool operator == (Card Card1, Card Card2)
-		{
-			if(Card1.IsValid() && Card2.IsValid())
-			{
-				if(Card1.Mask == Card2.Mask)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		public static bool operator != (Card Card1, Card Card2)
-		{
-			if(Card1.IsValid() && Card2.IsValid())
-			{
-				if(Card1.Mask != Card2.Mask)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		public static void SetDefaultCards()
-		{
-			DefaultCards = new Card[52];
-
-			int index = 0;
-
-			for(int i=0; i<4; ++i)
-			{
-				for(int j=0; j<13; ++j)
-				{
-					DefaultCards[index] = new Card(j, i);
-
-					++index;
-				}
-			}
-		}
-
-		public override string ToString()
-		{
-			//return string.Format("[{0}]: {1}", CardIndex, Title);
-			
-			return Title;
-		}
-
-		private string Text(int denomination, int suit)
+		public string Text(int denomination, int suit)
 		{
 			string str = "";
 
@@ -211,6 +173,60 @@ namespace Combinations
 			}
 
 			return str;
+		}
+
+		public bool IsValid()
+		{ 
+			if(Mask != ulong.MaxValue)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public void Invalid()
+		{
+			Title = "Invalid";
+
+			CardIndex = default;
+
+			Denomination = default;
+
+			Suit = default;
+
+			Mask = ulong.MaxValue;
+		}
+
+		public static bool operator == (Card Card1, Card Card2)
+		{
+			if(Card1.IsValid() && Card2.IsValid())
+			{
+				if(Card1.Mask == Card2.Mask)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public static bool operator != (Card Card1, Card Card2)
+		{
+			if(Card1.IsValid() && Card2.IsValid())
+			{
+				if(Card1.Mask != Card2.Mask)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public override string ToString()
+		{
+			return Title;
 		}
 	}
 }

@@ -20,16 +20,6 @@ namespace Combinations
 
 		public ulong Mask { get; protected set; }
 
-		public int FlushLevel { get; protected set; }
-
-		public int StraightLevel { get; protected set; }
-
-		public int StraightCount { get; protected set; }
-
-		public int PairLevel { get; protected set; }
-
-		public int CardLevel { get; protected set; }
-
 		public Board()
 		{
 			Invalid();
@@ -55,7 +45,7 @@ namespace Combinations
 			Set(str);
 		}
 
-		public void Set(Card сard1, Card сard2, Card сard3)
+		private void Set(Card сard1, Card сard2, Card сard3)
 		{
 			Invalid();
 
@@ -81,7 +71,7 @@ namespace Combinations
 			}
 		}
 
-		public void Set(Card card1, Card card2, Card card3, Card card4)
+		private void Set(Card card1, Card card2, Card card3, Card card4)
 		{
 			Invalid();
 
@@ -113,7 +103,7 @@ namespace Combinations
 			}
 		}
 
-		public void Set(Card card1, Card card2, Card card3, Card card4, Card card5)
+		private void Set(Card card1, Card card2, Card card3, Card card4, Card card5)
 		{
 			Invalid();
 
@@ -151,7 +141,7 @@ namespace Combinations
 			}
 		}
 
-		public void Set(string str)
+		private void Set(string str)
 		{
 			Invalid();
 
@@ -224,15 +214,9 @@ namespace Combinations
 			Card4 = new Card();
 			Card5 = new Card();
 
-			Street = 0;
+			Street = default;
 
 			Mask = ulong.MaxValue;
-
-			FlushLevel = 1;
-			StraightLevel = 1;
-			StraightCount = 1;
-			PairLevel = 0;
-			CardLevel = 0;
 		}
 
 		public bool IsValid()
@@ -328,7 +312,7 @@ namespace Combinations
 			return "Invalid";
 		}
 
-		private bool CardPattern(string str, ref string title, int start, ref int pos)
+		private static bool CardPattern(string str, ref string title, int start, ref int pos)
 		{
 			title = null;
 
@@ -401,215 +385,11 @@ namespace Combinations
 			}
 		}
 
-		private void UpdateFlushLevel()
-		{
-			// Сколько карт одной масти содержит данный борд.
-
-			int[] levels = new int[4];
-			
-			++levels[Card1.Suit];
-			++levels[Card2.Suit];
-			++levels[Card3.Suit];
-			
-			if(Street > 1)
-			{
-				++levels[Card4.Suit];
-			}
-			
-			if(Street > 2)
-			{
-				++levels[Card5.Suit];
-			}
-			
-			FlushLevel = 1;
-
-			for(int i=0; i<4; ++i)
-			{
-				if(levels[i] > FlushLevel)
-				{
-					FlushLevel = levels[i];
-				}
-			}
-		}
-
-		private void UpdateStraightLevel()
-		{
-			// A 2 3 4 5 6 7 8 9 T  J  Q  K  A
-
-			// 0 1 2 3 4 5 6 7 8 9 10 11 12 13
-
-			bool[] positions = new bool[14];
-
-			positions[Card1.Denomination+1] = true;
-			positions[Card2.Denomination+1] = true;
-			positions[Card3.Denomination+1] = true;
-
-			if(Street > 1)
-			{
-				positions[Card4.Denomination+1] = true;
-			}
-			
-			if(Street > 2)
-			{
-				positions[Card5.Denomination+1] = true;
-			}
-
-			positions[0] = positions[13];
-
-			// Какое максимальное число карт стоит подряд:
-
-			StraightLevel = 0;
-
-			for(int i=0; i<13; ++i)
-			{
-				int count = 0;
-
-				for(int j=i; j<i+5 && j<14; ++j)
-				{
-					if(!positions[j])
-					{
-						break;
-					}
-
-					++count;
-				}
-
-				StraightLevel = Math.Max(StraightLevel, count);
-			}
-
-			// Максимальное число карт, которые могут составить стрит:
-
-			StraightCount = 0;
-
-			for(int i=0; i<10; ++i)
-			{
-				int count = 0;
-
-				for(int j=i; j<i+5; ++j)
-				{
-					if(positions[j])
-					{
-						++count;
-					}
-				}
-
-				StraightCount = Math.Max(StraightCount, count);
-			}
-		}
-
-		private void UpdatePairLevel()
-		{
-			int[] denominations = new int[13];
-
-			++denominations[Card1.Denomination];
-			++denominations[Card2.Denomination];
-			++denominations[Card3.Denomination];
-
-			if(Street > 1)
-			{
-				++denominations[Card4.Denomination];
-			}
-			
-			if(Street > 2)
-			{
-				++denominations[Card5.Denomination];
-			}
-
-			// 0 => Nothing
-			// 1 => Week Pair
-			// 2 => Middle Pair
-			// 3 => High Pair
-			// 4 => Two pair
-			// 5 => Three of a Kind
-			// 6 => Full House
-			// 7 => Four of a Kind
-
-			PairLevel = 0;
-
-			for(int i=0; i<13; ++i)
-			{
-				if(denominations[i] == 4)
-				{
-					PairLevel = 7;
-					return;
-				}
-
-				if(denominations[i] == 3)
-				{
-					PairLevel = 5;
-
-					for(int j=0; j<13; ++j)
-					{
-						if(i != j)
-						{
-							if(denominations[j] == 2)
-							{
-								PairLevel = 6;
-								return;
-							}
-						}
-					}
-
-					return;
-				}
-
-				if(denominations[i] == 2)
-				{
-					if(i > 9)
-					{
-						PairLevel = Math.Max(PairLevel, 3);
-					}
-
-					if(i > 5)
-					{
-						PairLevel = Math.Max(PairLevel, 2);
-					}
-
-					PairLevel = Math.Max(PairLevel, 1);
-
-					for(int j=0; j<13; ++j)
-					{
-						if(i != j)
-						{
-							if(denominations[j] == 2)
-							{
-								PairLevel = Math.Max(PairLevel, 4);
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		private void UpdateCardLevel()
-		{
-			CardLevel = 0;
-
-			CardLevel = Math.Max(CardLevel, Card1.Denomination);
-			CardLevel = Math.Max(CardLevel, Card2.Denomination);
-			CardLevel = Math.Max(CardLevel, Card3.Denomination);
-
-			if(Street > 1)
-			{
-				CardLevel = Math.Max(CardLevel, Card4.Denomination);
-			}
-
-			if(Street > 2)
-			{
-				CardLevel = Math.Max(CardLevel, Card5.Denomination);
-			}
-		}
-
 		private void SetProperties()
 		{
 			UpdateTitle();
 			UpdateMask();
-
-			UpdateFlushLevel();
-			UpdateStraightLevel();
-			UpdatePairLevel();
-			UpdateCardLevel();
 		}
 	}
 }
+
