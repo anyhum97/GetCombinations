@@ -7,19 +7,6 @@ namespace Combinations
 {
 	partial class Program
 	{
-		public const uint Nothing = 0;
-		public const uint HighCard = 1;
-		public const uint WeakPair = 2;
-		public const uint MiddlePair = 3;
-		public const uint HighPair = 4;
-		public const uint TwoPairs = 5;
-		public const uint Trips = 6;
-		public const uint Set = 7;
-		public const uint Straight = 8;
-		public const uint Flush = 9;
-		public const uint FullHouse = 10;
-		public const uint Nuts = 11;
-
 		private static Random StaticRandom = new Random();
 
 		private static int[] GetCards()
@@ -121,8 +108,10 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board3) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetRowStraightLevel(board3) + "\n\n");
+						Console.Write("StraightLevel: " + GetStraightLevel(board3) + "\n\n");
 						
+						Console.Write("RowStraightLevel: " + GetRowStraightLevel(board3) + "\n\n");
+
 						Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + "\n\n");
 						
 						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street2) + ")\n\n");
@@ -131,8 +120,10 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board4) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetRowStraightLevel(board4) + "\n\n");
+						Console.Write("StraightLevel: " + GetStraightLevel(board4) + "\n\n");
 						
+						Console.Write("RowStraightLevel: " + GetRowStraightLevel(board3) + "\n\n");
+
 						Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + "\n\n");
 						
 						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street3) + ")\n\n");
@@ -141,7 +132,9 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board5) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetRowStraightLevel(board5) + "\n\n");
+						Console.Write("StraightLevel: " + GetStraightLevel(board3) + "\n\n");
+
+						Console.Write("RowStraightLevel: " + GetRowStraightLevel(board5) + "\n\n");
 					}
 					else
 					{
