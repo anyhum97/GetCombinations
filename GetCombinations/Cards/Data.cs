@@ -2619,6 +2619,9 @@ namespace Combinations
 		public const uint FullHouse = 8;
 		public const uint Nuts = 9;
 
+		/// <summary>
+		/// Выводит название комбинации
+		/// </summary>
 		public static string GetCombinationTitle(uint combination)
 		{
 			switch(combination)
@@ -2820,6 +2823,9 @@ namespace Combinations
 			}
 		}
 
+		/// <summary>
+		/// Определяет комбинацию, которую имеет игрок
+		/// </summary>
 		public static uint GetCombination(ulong Board, ulong Hand)
 		{
 			ulong Total = Board | Hand;
@@ -3182,6 +3188,9 @@ namespace Combinations
 			return GetHighCardRang(Hand);
 		}
 
+		/// <summary>
+		/// Определяет, сколько карт могут составить флеш
+		/// </summary>
 		public static uint GetFlushLevel(ulong cards)
 		{
 			uint cCardMask = (uint)((cards >> 00) & 0x1fffUL);
@@ -3199,6 +3208,9 @@ namespace Combinations
 			return FlushLevel;
 		}
 
+		/// <summary>
+		/// Определяет, сколько карт могут составить стрит
+		/// </summary>
 		public static uint GetStraightLevel(ulong cards)
 		{
 			uint cCardMask = (uint)((cards >> 00) & 0x1fffUL);
@@ -3213,6 +3225,9 @@ namespace Combinations
 			return StraightLevel;
 		}
 
+		/// <summary>
+		/// Определяет, сколько карт подряд могут составить стрит
+		/// </summary>
 		public static uint GetRowStraightLevel(ulong cards)
 		{
 			uint cCardMask = (uint)((cards >> 00) & 0x1fffUL);
