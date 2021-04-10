@@ -2815,25 +2815,6 @@ namespace Combinations
 			}
 		}
 
-		public static uint GetHighCardRang(ulong Hand)
-		{
-			uint cHandCardMask = (uint)((Hand >> 00) & 0x1fffUL);
-			uint dHandCardMask = (uint)((Hand >> 13) & 0x1fffUL);
-			uint hHandCardMask = (uint)((Hand >> 26) & 0x1fffUL);
-			uint sHandCardMask = (uint)((Hand >> 39) & 0x1fffUL);
-
-			uint HandDenominationMask = cHandCardMask | dHandCardMask | hHandCardMask | sHandCardMask;
-
-			if((HandDenominationMask & 4096) != 0)
-			{
-				// Ace High
-
-				return HighCard;
-			}
-
-			return Nothing;
-		}
-
 		public static uint GetCombination(ulong Board, ulong Hand)
 		{
 			ulong Total = Board | Hand;
@@ -3225,6 +3206,25 @@ namespace Combinations
 			uint StraightLevel = StraightLevelTable[BoardDenominationMask];
 
 			return StraightLevel;
+		}
+
+		public static uint GetHighCardRang(ulong Hand)
+		{
+			uint cHandCardMask = (uint)((Hand >> 00) & 0x1fffUL);
+			uint dHandCardMask = (uint)((Hand >> 13) & 0x1fffUL);
+			uint hHandCardMask = (uint)((Hand >> 26) & 0x1fffUL);
+			uint sHandCardMask = (uint)((Hand >> 39) & 0x1fffUL);
+
+			uint HandDenominationMask = cHandCardMask | dHandCardMask | hHandCardMask | sHandCardMask;
+
+			if((HandDenominationMask & 4096) != 0)
+			{
+				// Ace High
+
+				return HighCard;
+			}
+
+			return Nothing;
 		}
 
 		public static int GetHandIndex(int card1, int card2)

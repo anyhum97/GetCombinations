@@ -69,12 +69,12 @@ namespace Combinations
 		{
 			if(denomination < 0 || denomination > 12)
 			{
-				throw new Exception("Card.Set: Неверный пареметр \"denomination\". Допустимые значения от 0 до 12.");
+				throw new Exception("Card.Set: Неверный параметр \"denomination\". Допустимые значения от 0 до 12.");
 			}
 			
 			if(suit < 0 || suit > 3)
 			{
-				throw new Exception("Card.Set: Неверный пареметр \"suit\". Допустимые значения от 0 до 3.");
+				throw new Exception("Card.Set: Неверный параметр \"suit\". Допустимые значения от 0 до 3.");
 			}
 
 			CardIndex = 13 * suit + denomination;
