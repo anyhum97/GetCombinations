@@ -2603,28 +2603,24 @@ namespace Combinations
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
 		};
 
-		public const int Nothing = 0;
-		public const int HighCard = 1;
-		public const int WeakPair = 2;
-		public const int MiddlePair = 3;
-		public const int HighPair = 4;
-		public const int TwoPairs = 5;
-		public const int Trips = 6;
-		public const int Set = 7;
-		public const int Straight = 8;
-		public const int Flush = 9;
-		public const int FullHouse = 10;
-		public const int Nuts = 11;
+		public const uint Nothing = 0;
+		public const uint HighCard = 1;
+		public const uint OnePair = 2;
+		public const uint TwoPairs = 3;
+		public const uint Trips = 4;
+		public const uint Set = 5;
+		public const uint Straight = 6;
+		public const uint Flush = 7;
+		public const uint FullHouse = 8;
+		public const uint Nuts = 9;
 
-		public static string GetCombinationTitle(int combination)
+		public static string GetCombinationTitle(uint combination)
 		{
 			switch(combination)
 			{
 				case Nothing: return "Nothing";
 				case HighCard: return "A High";
-				case WeakPair: return "Weak Pair";
-				case MiddlePair: return "Middle Pair";
-				case HighPair: return "High Pair";
+				case OnePair: return "One Pair";
 				case TwoPairs: return "Two Pairs";
 				case Trips: return "Trips";
 				case Set: return "Set";
@@ -2817,36 +2813,6 @@ namespace Combinations
 					return CombinationRank;
 				}
 			}
-		}
-
-		public static uint GetPairRang(uint BoardDenominationMask, ulong Hand)
-		{
-			uint cHandCardMask = (uint)((Hand >> 00) & 0x1fffUL);
-			uint dHandCardMask = (uint)((Hand >> 13) & 0x1fffUL);
-			uint hHandCardMask = (uint)((Hand >> 26) & 0x1fffUL);
-			uint sHandCardMask = (uint)((Hand >> 39) & 0x1fffUL);
-
-			uint HandDenominationMask = cHandCardMask | dHandCardMask | hHandCardMask | sHandCardMask;
-
-			uint PairDenomination = BoardDenominationMask & HandDenominationMask;
-
-			if(PairDenomination < 64)
-			{
-				// 2-7 Pair
-
-				return WeakPair;
-			}
-
-			if(PairDenomination < 1024)
-			{
-				// 8-J Pair
-
-				return MiddlePair;
-			}
-
-			// Q-A Pair
-
-			return HighPair;
 		}
 
 		public static uint GetHighCardRang(ulong Hand)
@@ -3145,7 +3111,7 @@ namespace Combinations
 				{
 					// Hero Has One Pair
 
-					return GetPairRang(BoardDenominationMask, Hand);
+					return OnePair;
 				}
 
 				if(TotalDuplicateCount == 2)
@@ -3162,7 +3128,7 @@ namespace Combinations
 						{
 							// Hero Has One Pair
 
-							return GetPairRang(BoardDenominationMask, Hand);
+							return OnePair;
 						}
 					}
 					else
@@ -3222,7 +3188,7 @@ namespace Combinations
 					{
 						// Hero Has One Pair
 
-						return GetPairRang(BoardDenominationMask, Hand);
+						return OnePair;
 					}
 				}
 			}
@@ -3245,7 +3211,7 @@ namespace Combinations
 			uint FlushLevel = Math.Max(Math.Max(cFlushCards, dFlushCards), Math.Max(hFlushCards, sFlushCards));
 
 			return FlushLevel;
-		}		
+		}
 
 		public static uint GetStraightLevel(ulong cards)
 		{
