@@ -121,7 +121,7 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board3) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetStraightLevel(board3) + "\n\n");
+						Console.Write("StraightLevel: " + GetRowStraightLevel(board3) + "\n\n");
 						
 						Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + "\n\n");
 						
@@ -131,7 +131,7 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board4) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetStraightLevel(board4) + "\n\n");
+						Console.Write("StraightLevel: " + GetRowStraightLevel(board4) + "\n\n");
 						
 						Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + "\n\n");
 						
@@ -141,7 +141,7 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board5) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetStraightLevel(board5) + "\n\n");
+						Console.Write("StraightLevel: " + GetRowStraightLevel(board5) + "\n\n");
 					}
 					else
 					{
