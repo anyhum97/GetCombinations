@@ -56,6 +56,10 @@ namespace Combinations
 				uint Player2Street2 = GetCombination(board4, hand2);
 				uint Player2Street3 = GetCombination(board5, hand2);
 
+				uint BoardStreet1 = GetBoardCombination(board3);
+				uint BoardStreet2 = GetBoardCombination(board4);
+				uint BoardStreet3 = GetBoardCombination(board5);
+
 				uint rang1 = GetTexasHoldemCombinationRank(board5 | hand1);
 				uint rang2 = GetTexasHoldemCombinationRank(board5 | hand2);
 
@@ -79,7 +83,9 @@ namespace Combinations
 				bool levels = true;
 
 				bool win1 = rang1 > rang2;
+
 				bool win2 = rang2 > rang1;
+
 				bool tie = rang1 == rang2;
 
 				if(show)
@@ -100,7 +106,7 @@ namespace Combinations
 					{
 						Console.Clear();
 						
-						Console.Write("Flop: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + "\n\n");
+						Console.Write("Flop: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " (" + GetCombinationTitle(BoardStreet1) + ")\n\n");
 						
 						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street1) + ")\n\n");
 						
@@ -108,11 +114,11 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board3) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetStraightLevel(board3) + "\n\n");
+						Console.Write("StraightCount: " + GetStraightCount(board3) + "\n\n");
 						
-						Console.Write("RowStraightLevel: " + GetRowStraightLevel(board3) + "\n\n");
+						Console.Write("StraightLevel: " + GetStraightLevel(board3) + "\n\n");
 
-						Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + "\n\n");
+						Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " (" + GetCombinationTitle(BoardStreet2) + ")\n\n");
 						
 						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street2) + ")\n\n");
 						
@@ -120,11 +126,11 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board4) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetStraightLevel(board4) + "\n\n");
+						Console.Write("StraightCount: " + GetStraightCount(board4) + "\n\n");
 						
-						Console.Write("RowStraightLevel: " + GetRowStraightLevel(board3) + "\n\n");
+						Console.Write("StraightLevel: " + GetStraightLevel(board4) + "\n\n");
 
-						Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + "\n\n");
+						Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + " (" + GetCombinationTitle(BoardStreet3) + ")\n\n");
 						
 						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street3) + ")\n\n");
 						
@@ -132,9 +138,9 @@ namespace Combinations
 						
 						Console.Write("FlushLevel: " + GetFlushLevel(board5) + "\n\n");
 						
-						Console.Write("StraightLevel: " + GetStraightLevel(board3) + "\n\n");
+						Console.Write("StraightCount: " + GetStraightCount(board5) + "\n\n");
 
-						Console.Write("RowStraightLevel: " + GetRowStraightLevel(board5) + "\n\n");
+						Console.Write("StraightLevel: " + GetStraightLevel(board5) + "\n\n");
 					}
 					else
 					{
@@ -181,13 +187,7 @@ namespace Combinations
 
 		private static void Main()
 		{
-			Board board = new Board("TdTsTc9h9c");
-
-			Console.WriteLine(GetCombinationTitle(GetBoardCombination(board.Mask)));
-
-			Console.ReadKey();
-
-			//GetCardsTest();
+			GetCardsTest();
 		}
 	}
 }
