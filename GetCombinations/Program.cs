@@ -1,6 +1,6 @@
 ﻿using System;
 
-using static Combinations.Data;
+using static Combinations.GetCombinations;
 using static Combinations.Equity;
 
 namespace Combinations

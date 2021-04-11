@@ -69,17 +69,17 @@ namespace Combinations
 		{
 			if(denomination < 0 || denomination > 12)
 			{
-				throw new Exception("Card.Set: Неверный параметр \"denomination\". Допустимые значения от 0 до 12.");
+				throw new Exception("Card.Set: Invalid Argument \"denomination\". Valid values from 0 to 12.");
 			}
 			
 			if(suit < 0 || suit > 3)
 			{
-				throw new Exception("Card.Set: Неверный параметр \"suit\". Допустимые значения от 0 до 3.");
+				throw new Exception("Card.Set: Invalid Argument \"suit\". Valid values from от 0 to 3.");
 			}
 
 			CardIndex = 13 * suit + denomination;
 			
-			Title = Data.DefaultCardTitle[CardIndex];
+			Title = GetCombinations.DefaultCardTitle[CardIndex];
 			
 			Mask = 1UL << CardIndex;
 

@@ -60,11 +60,11 @@ namespace Combinations
 					Card2 = card1;
 				}
 
-				HandIndex = Data.GetHandIndex(Card1.CardIndex, Card2.CardIndex);
+				HandIndex = GetCombinations.GetHandIndex(Card1.CardIndex, Card2.CardIndex);
 
-				PreflopHandIndex = Data.PreflopHandIndex[HandIndex];
+				PreflopHandIndex = GetCombinations.PreflopHandIndex[HandIndex];
 
-				Title = Data.DefaultHandTitle[HandIndex];
+				Title = GetCombinations.DefaultHandTitle[HandIndex];
 
 				Mask = Card1.Mask | Card2.Mask;
 			}

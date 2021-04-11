@@ -1,6 +1,6 @@
 ﻿using System;
 
-using static Combinations.Data;
+using static Combinations.GetCombinations;
 
 namespace Combinations
 {
@@ -9,7 +9,8 @@ namespace Combinations
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		/// <summary>
-		/// Вычисляет силу руки на флопе против спектра одного оппонента
+		/// Calculates hand strength on the flop against one opponent's range.<br></br><br></br>
+		/// Вычисляет силу руки на флопе против спектра одного оппонента.
 		/// </summary>
 		/// <param name="Probability">Веса спектра оппонента [1326]</param>
 		/// <returns></returns>
@@ -78,7 +79,8 @@ namespace Combinations
 		}
 
 		/// <summary>
-		/// Вычисляет силу руки на тёрне против спектра одного оппонента
+		/// Calculates hand strength on the turn against one opponent's range.<br></br><br></br>
+		/// Вычисляет силу руки на тёрне против спектра одного оппонента.
 		/// </summary>
 		/// <param name="Probability">Веса спектра оппонента [1326]</param>
 		/// <returns></returns>
@@ -137,7 +139,8 @@ namespace Combinations
 		}
 		
 		/// <summary>
-		/// Вычисляет силу руки на ривере против спектра одного оппонента
+		/// Calculates hand strength on the river against one opponent's range.<br></br><br></br>
+		/// Вычисляет силу руки на ривере против спектра одного оппонента.
 		/// </summary>
 		/// <param name="Probability">Веса спектра оппонента [1326]</param>
 		/// <returns></returns>
@@ -188,12 +191,9 @@ namespace Combinations
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		/// <summary>
-		/// Вычисляет силу руки на флопе против спектра двух оппонентов
+		/// Calculates hand strength on the flop against two opponent's ranges.<br></br><br></br>
+		/// Вычисляет силу руки на флопе против спектра двух оппонентов.
 		/// </summary>
-		/// <param name="Probability2">Веса спектра первого оппонента [1326]</param>
-		/// <param name="Probability3">Веса спектра второго оппонента [1326]</param>
-		/// <param name="iterations">Число итераций для приближённого расчёта</param>
-		/// <returns></returns>
 		public static float GetFlopEquity(ulong Board, ulong Hand1, float[] Probability2, float[] Probability3, int iterations)
 		{
 			Random Random = new Random();
@@ -297,11 +297,9 @@ namespace Combinations
 		}
 
 		/// <summary>
-		/// Вычисляет силу руки на тёрне против спектра двух оппонентов
+		/// Calculates hand strength on the turn against two opponent's ranges.<br></br><br></br>
+		/// Вычисляет силу руки на тёрне против спектра двух оппонентов.
 		/// </summary>
-		/// <param name="Probability2">Веса спектра первого оппонента [1326]</param>
-		/// <param name="Probability3">Веса спектра второго оппонента [1326]</param>
-		/// <returns></returns>
 		public static float GetTurnEquity(ulong Board, ulong Hand1, float[] Probability2, float[] Probability3)
 		{
 			ulong Base1 = Board | Hand1;
@@ -384,11 +382,9 @@ namespace Combinations
 		}
 
 		/// <summary>
+		/// Calculates hand strength on the river against two opponent's ranges.<br></br><br></br>
 		/// Вычисляет силу руки на ривере против спектра двух оппонентов
 		/// </summary>
-		/// <param name="Probability2">Веса спектра первого оппонента [1326]</param>
-		/// <param name="Probability3">Веса спектра второго оппонента [1326]</param>
-		/// <returns></returns>
 		public static float GetRiverEquity(ulong Board, ulong Hand1, float[] Probability2, float[] Probability3)
 		{
 			ulong Base1 = Board | Hand1;

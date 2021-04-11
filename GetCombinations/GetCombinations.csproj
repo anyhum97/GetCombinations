@@ -47,8 +47,9 @@
     <Compile Include="Cards\Board.cs" />
     <Compile Include="Cards\Card.cs" />
     <Compile Include="Cards\Data.cs" />
-    <Compile Include="Equity.cs" />
+    <Compile Include="Helpers\Equity.cs" />
     <Compile Include="Cards\Hand.cs" />
+    <Compile Include="GetCombinations.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
