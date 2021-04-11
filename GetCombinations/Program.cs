@@ -181,7 +181,13 @@ namespace Combinations
 
 		private static void Main()
 		{
-			GetCardsTest();
+			Board board = new Board("TdTsTc9h9c");
+
+			Console.WriteLine(GetCombinationTitle(GetBoardCombination(board.Mask)));
+
+			Console.ReadKey();
+
+			//GetCardsTest();
 		}
 	}
 }

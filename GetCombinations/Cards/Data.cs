@@ -3187,6 +3187,160 @@ namespace Combinations
 
 			return GetHighCardRang(Hand);
 		}
+		
+		/// <summary>
+		/// Определяет комбинацию, которую составляет борд
+		/// </summary>
+		public static uint GetBoardCombination(ulong Board)
+		{
+			uint cBoardCardMask = (uint)((Board >> 00) & 0x1fffUL);
+			uint dBoardCardMask = (uint)((Board >> 13) & 0x1fffUL);
+			uint hBoardCardMask = (uint)((Board >> 26) & 0x1fffUL);
+			uint sBoardCardMask = (uint)((Board >> 39) & 0x1fffUL);
+
+			uint cBoardFlushCards = BitCountTable[cBoardCardMask];
+			uint dBoardFlushCards = BitCountTable[dBoardCardMask];
+			uint hBoardFlushCards = BitCountTable[hBoardCardMask];
+			uint sBoardFlushCards = BitCountTable[sBoardCardMask];
+
+			uint BoardCardCount = 0;
+			
+			BoardCardCount += BitCountTable[(Board >> 00) & 0x1fff];
+			
+			BoardCardCount += BitCountTable[(Board >> 13) & 0x1fff];
+			
+			BoardCardCount += BitCountTable[(Board >> 26) & 0x1fff];
+			
+			BoardCardCount += BitCountTable[(Board >> 39) & 0x1fff];
+
+			uint BoardDenominationMask = cBoardCardMask | dBoardCardMask | hBoardCardMask | sBoardCardMask;
+
+			uint BoardDenominationCount = BitCountTable[BoardDenominationMask];
+
+			uint BoardDuplicateCount = BoardCardCount - BoardDenominationCount;
+
+			if(BoardDenominationCount >= 5)
+			{
+				if(cBoardFlushCards >= 5)
+				{
+					uint cBoardStraightValue = StraightValueTable[cBoardCardMask];
+
+					if(cBoardStraightValue >= 5)
+					{
+						// Board Has Straight Flush (c)
+
+						return Nuts;
+					}
+
+					// Board Has Flush (c)
+
+					return Flush;
+				}
+
+				if(dBoardFlushCards >= 5)
+				{
+					uint dBoardStraightValue = StraightValueTable[dBoardCardMask];
+
+					if(dBoardStraightValue >= 5)
+					{
+						// Board Has Straight Flush (d)
+
+						return Nuts;
+					}
+
+					// Board Has Flush (d)
+
+					return Flush;
+				}
+
+				if(hBoardFlushCards >= 5)
+				{
+					uint hBoardStraightValue = StraightValueTable[hBoardCardMask];
+
+					if(hBoardStraightValue >= 5)
+					{
+						// Board Has Straight Flush (h)
+
+						return Nuts;
+					}
+
+					// Board Has Flush (h)
+
+					return Flush;
+				}
+				
+				if(sBoardFlushCards >= 5)
+				{
+					uint sBoardStraightValue = StraightValueTable[sBoardCardMask];
+
+					if(sBoardStraightValue >= 5)
+					{
+						// Board Has Straight Flush (s)
+
+						return Nuts;
+					}
+
+					// Board Has Flush (s)
+
+					return Flush;
+				}
+
+				uint BoardStraightValue = StraightValueTable[BoardDenominationMask];
+				
+				if(BoardStraightValue >= 5)
+				{
+					// Board Has Straight
+					
+					return Straight;
+				}
+			}
+
+			if(BoardDuplicateCount == 0)
+			{
+				return Nothing;
+			}
+
+			if(BoardDuplicateCount == 1)
+			{
+				return OnePair;
+			}
+
+			uint BoardTwoMask = BoardDenominationMask ^ cBoardCardMask ^ dBoardCardMask ^ hBoardCardMask ^ sBoardCardMask;
+			
+			if(BoardDuplicateCount == 2)
+			{
+				if(BoardTwoMask != 0)
+				{
+					// Board Has Two Pairs
+
+					return TwoPairs;
+				}
+				else
+				{
+					// Board Has Set or Trips
+
+					return Set;
+				}
+			}
+
+			uint BoardFourMask = hBoardCardMask & dBoardCardMask & cBoardCardMask & sBoardCardMask;
+			
+			if(BoardFourMask != 0)
+			{
+				// Board Has Four of a Kind
+				
+				return Nuts;
+			}
+
+			if(BitCountTable[BoardTwoMask] != BoardDuplicateCount)
+			{
+				// Board Has Full House
+				
+				return FullHouse;
+			}
+
+			return Nothing;
+		}
 
 		/// <summary>
 		/// Определяет, сколько карт могут составить флеш
