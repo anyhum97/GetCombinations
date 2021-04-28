@@ -6,14 +6,19 @@ namespace Combinations
 	{
 		public const uint Nothing = 0;
 		public const uint HighCard = 1;
-		public const uint OnePair = 2;
-		public const uint TwoPairs = 3;
-		public const uint Trips = 4;
-		public const uint Set = 5;
-		public const uint Straight = 6;
-		public const uint Flush = 7;
-		public const uint FullHouse = 8;
-		public const uint Nuts = 9;
+		public const uint WeakPair = 2;
+		public const uint MiddlePair = 3;
+		public const uint HighPair = 4;
+		public const uint OverPair = 5;
+		public const uint TwoPairs = 6;
+		public const uint Trips = 7;
+		public const uint Set = 8;
+		public const uint Straight = 9;
+		public const uint Flush = 10;
+		public const uint FullHouse = 11;
+		public const uint Nuts = 12;
+
+		public const uint BoardOnePair = 13;
 
 		/// <summary>
 		/// Print the combination title
@@ -25,7 +30,12 @@ namespace Combinations
 			{
 				case Nothing: return "Nothing";
 				case HighCard: return "A High";
-				case OnePair: return "One Pair";
+
+				case WeakPair: return "Weak Pair";
+				case MiddlePair: return "Middle Pair";
+				case HighPair: return "High Pair";
+				case OverPair: return "Over Pair";
+
 				case TwoPairs: return "Two Pairs";
 				case Trips: return "Trips";
 				case Set: return "Set";
@@ -33,6 +43,8 @@ namespace Combinations
 				case Flush: return "Flush";
 				case FullHouse: return "Full House";
 				case Nuts: return "Nuts";
+
+				case BoardOnePair: return "One Pair";
 			}
 
 			return "Invalid Combination";
@@ -507,7 +519,7 @@ namespace Combinations
 				{
 					// Hero Has One Pair
 
-					return OnePair;
+					return GetPairLevel(Board, Hand);
 				}
 
 				if(TotalDuplicateCount == 2)
@@ -524,7 +536,7 @@ namespace Combinations
 						{
 							// Hero Has One Pair
 
-							return OnePair;
+							return GetPairLevel(Board, Hand);
 						}
 					}
 					else
@@ -584,7 +596,7 @@ namespace Combinations
 					{
 						// Hero Has One Pair
 
-						return OnePair;
+						return GetPairLevel(Board, Hand);
 					}
 				}
 			}
@@ -707,7 +719,7 @@ namespace Combinations
 
 			if(BoardDuplicateCount == 1)
 			{
-				return OnePair;
+				return BoardOnePair;
 			}
 
 			uint BoardTwoMask = BoardDenominationMask ^ cBoardCardMask ^ dBoardCardMask ^ hBoardCardMask ^ sBoardCardMask;
@@ -805,11 +817,6 @@ namespace Combinations
 			return StraightLevel;
 		}
 
-		public const uint WeakPair = 0;
-		public const uint MiddlePair = 1;
-		public const uint HighPair = 2;
-		public const uint OverPair = 3;
-
 		public static uint GetPairLevel(ulong Board, ulong Hand)
 		{
 			uint cBoardCardMask = (uint)((Board >> 00) & 0x1fffUL);
@@ -890,6 +897,17 @@ namespace Combinations
 			return Nothing;
 		}
 
+		private static uint GetHighBit(uint bits)
+		{
+			bits |= bits >> 1;
+			bits |= bits >> 2;
+			bits |= bits >> 4;
+			bits |= bits >> 8;
+			bits |= bits >> 16;
+
+			return bits - (bits >> 1);
+		}
+
 		private static uint GetLowBit(uint bits)
 		{
 		    uint bit = 1;
@@ -905,17 +923,6 @@ namespace Combinations
 		    }
 
 			return bit;
-		}
-
-		private static uint GetHighBit(uint bits)
-		{
-			bits |= bits >> 1;
-			bits |= bits >> 2;
-			bits |= bits >> 4;
-			bits |= bits >> 8;
-			bits |= bits >> 16;
-
-			return bits - (bits >> 1);
 		}
 	}
 }

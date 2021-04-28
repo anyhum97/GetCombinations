@@ -187,13 +187,7 @@ namespace Combinations
 
 		private static void Main()
 		{
-			Board board = new Board("3d8cJh");
-			
-			Hand hand = new Hand("2d2s");
-			
-			GetPairLevel(board.Mask, hand.Mask);
-
-			//GetCardsTest();
+			GetCardsTest();
 		}
 	}
 }
