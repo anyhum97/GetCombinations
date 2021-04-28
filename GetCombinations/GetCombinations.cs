@@ -805,6 +805,72 @@ namespace Combinations
 			return StraightLevel;
 		}
 
+		public const uint WeakPair = 0;
+		public const uint MiddlePair = 1;
+		public const uint HighPair = 2;
+		public const uint OverPair = 3;
+
+		public static uint GetPairLevel(ulong Board, ulong Hand)
+		{
+			uint cBoardCardMask = (uint)((Board >> 00) & 0x1fffUL);
+			uint dBoardCardMask = (uint)((Board >> 13) & 0x1fffUL);
+			uint hBoardCardMask = (uint)((Board >> 26) & 0x1fffUL);
+			uint sBoardCardMask = (uint)((Board >> 39) & 0x1fffUL);
+
+			uint cHandCardMask = (uint)((Hand >> 00) & 0x1fffUL);
+			uint dHandCardMask = (uint)((Hand >> 13) & 0x1fffUL);
+			uint hHandCardMask = (uint)((Hand >> 26) & 0x1fffUL);
+			uint sHandCardMask = (uint)((Hand >> 39) & 0x1fffUL);
+
+			uint BoardDenominationMask = cBoardCardMask | dBoardCardMask | hBoardCardMask | sBoardCardMask;
+
+			uint HandDenominationMask = cHandCardMask | dHandCardMask | hHandCardMask | sHandCardMask;
+
+			ulong PairBit = HandDenominationMask & BoardDenominationMask;
+
+			ulong HighHeroBit = GetHighBit(HandDenominationMask);
+
+			ulong HighBoardBit = GetHighBit(BoardDenominationMask);
+
+			ulong HighPairBit = GetHighBit((uint)PairBit);
+
+			ulong LowHeroBit = GetLowBit(HandDenominationMask);
+
+			ulong LowBoardBit = GetLowBit(BoardDenominationMask);
+
+			ulong LowPairBit = GetLowBit((uint)PairBit);
+
+			if(PairBit == 0)
+			{
+				if(HighHeroBit > HighBoardBit)
+				{
+					return OverPair;
+				}
+			}
+
+			if(HighHeroBit == HighBoardBit)
+			{
+				return HighPair;
+			}
+
+			if(PairBit > 0)
+			{
+				if(LowPairBit > LowBoardBit)
+				{
+					return MiddlePair;
+				}
+			}
+			else
+			{
+				if(LowHeroBit > LowBoardBit)
+				{
+					return MiddlePair;
+				}
+			}
+
+			return WeakPair;
+		}
+
 		public static uint GetHighCardRang(ulong Hand)
 		{
 			uint cHandCardMask = (uint)((Hand >> 00) & 0x1fffUL);
@@ -822,6 +888,34 @@ namespace Combinations
 			}
 
 			return Nothing;
+		}
+
+		private static uint GetLowBit(uint bits)
+		{
+		    uint bit = 1;
+
+			if(bits == 0)
+			{
+				return 0;
+			}
+
+		    while((bits & bit) == 0)
+			{
+		        bit = bit << 1;
+		    }
+
+			return bit;
+		}
+
+		private static uint GetHighBit(uint bits)
+		{
+			bits |= bits >> 1;
+			bits |= bits >> 2;
+			bits |= bits >> 4;
+			bits |= bits >> 8;
+			bits |= bits >> 16;
+
+			return bits - (bits >> 1);
 		}
 	}
 }
