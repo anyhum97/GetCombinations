@@ -78,116 +78,80 @@ namespace Combinations
 					throw new Exception();
 				}
 
-				const bool show = true;
+				Card BoardCard1 = Card.DefaultCards[cards[0]];
+				Card BoardCard2 = Card.DefaultCards[cards[1]];
+				Card BoardCard3 = Card.DefaultCards[cards[2]];
+				Card BoardCard4 = Card.DefaultCards[cards[3]];
+				Card BoardCard5 = Card.DefaultCards[cards[4]];
 
-				bool levels = true;
+				Card Player1Card1 = Card.DefaultCards[cards[5]];
+				Card Player1Card2 = Card.DefaultCards[cards[6]];
 
-				bool win1 = rang1 > rang2;
+				Card Player2Card1 = Card.DefaultCards[cards[7]];
+				Card Player2Card2 = Card.DefaultCards[cards[8]];
 
-				bool win2 = rang2 > rang1;
+				Board board = new Board(BoardCard1, BoardCard2, BoardCard3, BoardCard4, BoardCard5);
 
-				bool tie = rang1 == rang2;
+				Hand Hand1 = new Hand(Player1Card1, Player1Card2);
 
-				if(show)
+				Hand Hand2 = new Hand(Player2Card1, Player2Card2);
+
+				if(ShowSthraight4(board.Mask, Hand1.Mask, out string str1))
 				{
-					Card BoardCard1 = Card.DefaultCards[cards[0]];
-					Card BoardCard2 = Card.DefaultCards[cards[1]];
-					Card BoardCard3 = Card.DefaultCards[cards[2]];
-					Card BoardCard4 = Card.DefaultCards[cards[3]];
-					Card BoardCard5 = Card.DefaultCards[cards[4]];
+					Console.Clear();
 
-					Card Player1Card1 = Card.DefaultCards[cards[5]];
-					Card Player1Card2 = Card.DefaultCards[cards[6]];
+					Console.Write("Board: " + board.Title + "\n\n");
 
-					Card Player2Card1 = Card.DefaultCards[cards[7]];
-					Card Player2Card2 = Card.DefaultCards[cards[8]];
+					Console.Write("Hand: " + Hand1.Title + "\n\n");
 
-					if(levels)
-					{
-						Console.Clear();
-						
-						Console.Write("Flop: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " (" + GetCombinationTitle(BoardStreet1) + ")\n\n");
-						
-						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street1) + ")\n\n");
-						
-						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street1) + ")\n\n");
-						
-						Console.Write("FlushLevel: " + GetFlushLevel(board3) + "\n\n");
-						
-						Console.Write("StraightCount: " + GetStraightCount(board3) + "\n\n");
-						
-						Console.Write("StraightLevel: " + GetStraightLevel(board3) + "\n\n");
-
-						Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " (" + GetCombinationTitle(BoardStreet2) + ")\n\n");
-						
-						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street2) + ")\n\n");
-						
-						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street2) + ")\n\n");
-						
-						Console.Write("FlushLevel: " + GetFlushLevel(board4) + "\n\n");
-						
-						Console.Write("StraightCount: " + GetStraightCount(board4) + "\n\n");
-						
-						Console.Write("StraightLevel: " + GetStraightLevel(board4) + "\n\n");
-
-						Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + " (" + GetCombinationTitle(BoardStreet3) + ")\n\n");
-						
-						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street3) + ")\n\n");
-						
-						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street3) + ")\n\n");
-						
-						Console.Write("FlushLevel: " + GetFlushLevel(board5) + "\n\n");
-						
-						Console.Write("StraightCount: " + GetStraightCount(board5) + "\n\n");
-
-						Console.Write("StraightLevel: " + GetStraightLevel(board5) + "\n\n");
-					}
-					else
-					{
-						Console.Clear();
-						
-						Console.Write("Flop: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + "\n\n");
-						
-						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street1) + ")\n\n");
-						
-						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street1) + ")\n\n");
-						
-						Console.Write("Turn: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + "\n\n");
-						
-						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street2) + ")\n\n");
-						
-						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street2) + ")\n\n");
-						
-						Console.Write("River: " + BoardCard1 + " " + BoardCard2 + " " + BoardCard3 + " " + BoardCard4 + " " + BoardCard5 + "\n\n");
-						
-						Console.Write("Player1: " + Player1Card1  + " " + Player1Card2 + " (" + GetCombinationTitle(Player1Street3) + ")\n\n");
-						
-						Console.Write("Player2: " + Player2Card1  + " " + Player2Card2 + " (" + GetCombinationTitle(Player2Street3) + ")\n\n");
-					}
-					
-					if(rang1 > rang2)
-					{
-						Console.Write("Player1 Wins\n\n");
-					}
-					
-					if(rang1 == rang2)
-					{
-						Console.Write("Tie\n\n");
-					}
-					
-					if(rang2 > rang1)
-					{
-						Console.Write("Player2 Wins\n\n");
-					}
-
-					Console.ReadKey();
+					Console.Write(str1);
 				}
+
+				if(ShowSthraight4(board.Mask, Hand2.Mask, out string str2))
+				{
+					Console.Clear();
+
+					Console.Write("Board: " + board.Title + "\n\n");
+
+					Console.Write("Hand: " + Hand2.Title + "\n\n");
+
+					Console.Write(str2);
+				}
+
+				Console.ReadKey();
 			}
+		}
+
+		private static bool ShowSthraight4(ulong Board, ulong Hand, out string str)
+		{
+			str = default;
+
+			uint heroStraightCount = GetStraightCount(Board | Hand);
+
+			uint heroStraightLevel = GetStraightLevel(Board | Hand);			
+
+			if(heroStraightCount == 4)
+			{
+				if(heroStraightLevel == 4)
+				{
+					str = "Player Has OESD\n\n";
+				}
+				else
+				{
+					str = "Player Has Gutshot\n\n";
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
 		private static void Main()
 		{
 			GetCardsTest();
+
+			Console.ReadKey();
 		}
 	}
 }
