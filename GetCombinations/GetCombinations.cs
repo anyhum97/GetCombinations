@@ -30,12 +30,10 @@ namespace Combinations
 			{
 				case Nothing: return "Nothing";
 				case HighCard: return "A High";
-
 				case WeakPair: return "Weak Pair";
 				case MiddlePair: return "Middle Pair";
 				case HighPair: return "High Pair";
 				case OverPair: return "Over Pair";
-
 				case TwoPairs: return "Two Pairs";
 				case Trips: return "Trips";
 				case Set: return "Set";
@@ -817,7 +815,7 @@ namespace Combinations
 			return StraightLevel;
 		}
 
-		public static uint GetPairLevel(ulong Board, ulong Hand)
+		private static uint GetPairLevel(ulong Board, ulong Hand)
 		{
 			uint cBoardCardMask = (uint)((Board >> 00) & 0x1fffUL);
 			uint dBoardCardMask = (uint)((Board >> 13) & 0x1fffUL);
@@ -878,7 +876,7 @@ namespace Combinations
 			return WeakPair;
 		}
 
-		public static uint GetHighCardRang(ulong Hand)
+		private static uint GetHighCardRang(ulong Hand)
 		{
 			uint cHandCardMask = (uint)((Hand >> 00) & 0x1fffUL);
 			uint dHandCardMask = (uint)((Hand >> 13) & 0x1fffUL);
