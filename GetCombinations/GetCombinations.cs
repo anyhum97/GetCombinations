@@ -814,6 +814,68 @@ namespace Combinations
 
 			return StraightLevel;
 		}
+		
+		public static bool CheckOesd(ulong cards)
+		{
+			uint cCardMask = (uint)((cards >> 00) & 0x1fffUL);
+			uint dCardMask = (uint)((cards >> 13) & 0x1fffUL);
+			uint hCardMask = (uint)((cards >> 26) & 0x1fffUL);
+			uint sCardMask = (uint)((cards >> 39) & 0x1fffUL);
+
+			uint DenominationMask = cCardMask | dCardMask | hCardMask | sCardMask;
+
+			if((DenominationMask & 7680) == 7680 || (DenominationMask & 15) == 15)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		public static bool IsGutshot(ulong Board, ulong Hand, out bool isGutshot, out bool isOesd)
+		{
+			isGutshot = default;
+
+			isOesd = default;
+
+			uint cCardMask = (uint)((Hand >> 00) & 0x1fffUL);
+			uint dCardMask = (uint)((Hand >> 13) & 0x1fffUL);
+			uint hCardMask = (uint)((Hand >> 26) & 0x1fffUL);
+			uint sCardMask = (uint)((Hand >> 39) & 0x1fffUL);
+
+			uint HandDenominationMask = cCardMask | dCardMask | hCardMask | sCardMask;
+
+			uint heroStraightCount = GetStraightCount(Board | Hand);
+
+			uint heroStraightLevel = GetStraightLevel(Board | Hand);	
+
+			if(heroStraightCount != 4)
+			{
+				return false;
+			}
+
+			if(heroStraightLevel == 4)
+			{
+				if(GetHighBit(HandDenominationMask) == 2048)
+				{
+
+				}
+				else
+				{
+					isOesd = true;
+
+					isGutshot = false;
+				}
+			}
+			else
+			{
+				isOesd = false;
+
+				isGutshot = true;
+			}
+
+			return true;
+		}
 
 		private static uint GetPairLevel(ulong Board, ulong Hand)
 		{

@@ -105,6 +105,8 @@ namespace Combinations
 					Console.Write("Hand: " + Hand1.Title + "\n\n");
 
 					Console.Write(str1);
+
+					Console.ReadKey();
 				}
 
 				if(ShowSthraight4(board.Mask, Hand2.Mask, out string str2))
@@ -116,9 +118,9 @@ namespace Combinations
 					Console.Write("Hand: " + Hand2.Title + "\n\n");
 
 					Console.Write(str2);
+					
+					Console.ReadKey();
 				}
-
-				Console.ReadKey();
 			}
 		}
 
@@ -134,14 +136,23 @@ namespace Combinations
 			{
 				if(heroStraightLevel == 4)
 				{
-					str = "Player Has OESD\n\n";
+					if(CheckOesd(Board | Hand))
+					{
+						str = "Player Has OESD\n\n";
+					}
+					else
+					{
+						str = "Player Has Gutshot\n\n";
+					}
+					
+					return true;
 				}
 				else
 				{
 					str = "Player Has Gutshot\n\n";
 				}
 
-				return true;
+				//return true;
 			}
 
 			return false;
@@ -150,6 +161,19 @@ namespace Combinations
 		private static void Main()
 		{
 			GetCardsTest();
+
+			//Board board = new Board("6c3hKhQsTd");
+			//
+			//Hand hand = new Hand("KsJd");
+
+			//Board board = new Board("2c3c4c");
+			//
+			//Hand hand = new Hand("5cKh");
+
+			//if(ShowSthraight4(board.Mask, hand.Mask, out string str))
+			//{
+			//	Console.WriteLine(str);
+			//}
 
 			Console.ReadKey();
 		}
